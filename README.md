@@ -45,4 +45,4 @@ Homework 2 : ？？？
 ```
 [按我回到TOP (ページトップへ)](#readme)
 
-[miku]: https://j91157j91157.github.io/GDHW/gifs/chika.gif
+[miku]: https://j91157j91157.github.io/3DHW/gifs/chika.gif
