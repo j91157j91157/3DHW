@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>★キラキラ聖誕樹★</title>
+    <link rel="shortcut icon" href="https://i.imgur.com/jnjsKvZ.png">
+</head>
+<div id='light0' style='top: 10px;left: 215px;'></div>
+<div id='light1' style='top: 90px;left: 190px;'></div>
+<div id='light2' style='top: 150px;left: 150px;'></div>
+<div id='light3' style='top: 210px;left: 215px;'></div>
+<div id='light4' style='top: 270px;left: 160px;'></div>
+<div id='light5' style='top: 330px;left: 110px;'></div>
+<div id='light6' style='top: 370px;left: 170px;'></div>
+<div id='light7' style='top: 390px;left: 240px;'></div>
+<div id='light8' style='top: 410px;left: 310px;'></div>
+<div id='light9' style='top: 470px;left: 250px;'></div>
+<div id='light10' style='top: 510px;left: 170px;'></div>
+<div id='light11' style='top: 540px;left: 100px;'></div>
+<div id='light12' style='top: 570px;left: 170px;'></div>
+<div id='light13' style='top: 590px;left: 240px;'></div>
+<div id='light14' style='top: 600px;left: 310px;'></div>
+<img src="https://i.imgur.com/wOkxldK.png">
+<button id="power">Power</button>
+<h1>Web 3D Homework 1 (<a href="https://jsfiddle.net/j91157j91157/bcjpksow/">jsfiddle</a>)</h1>
+<h2>by I4B49 邱章嘉</h2>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<style>
+body {
+  background: -webkit-linear-gradient(top, rgba(235, 241, 246, 1) 0%, rgba(171, 211, 238, 1) 50%, rgba(137, 195, 235, 1) 100%);
+  background-attachment:fixed;
+  overflow: hidden;
+
+}
+
+button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+</style>
+
+<body>
+<script>
+  function Lamp(lampId) {
+    var name = '#' + lampId;
+    var status = false;
+    var timeset;
+    $(name).css ("position", "absolute");
+    $(name).css ("border-radius", "999em");
+    $(name).css ("width", "30px");
+    $(name).css ("height", "30px");
+    $(name).css ('background-color', "hsl(0, 0%, 50%)");
+
+    var randomHSL = function() {
+    	let numH = Math.floor(Math.random() * 360);
+      //let numS = Math.floor(Math.random() * 100);
+      //let numL = Math.floor(Math.random() * 100);
+    	return "hsl(" + numH + ",100%,78%)";
+  	}
+
+    var toggle = function() {
+      status = !status;
+
+      if (status) {
+      	$(name).css ('background-color', randomHSL());
+        //$(name).text (name + ' is on');
+      } else {
+      	$(name).css ('background-color', randomHSL());
+        //$(name).text (name + ' is off');
+      }
+    };
+
+    this.off = function() {
+    	clearInterval(timeset);
+      $(name).css ('background-color', "hsl(0, 0%, 50%)");
+    }
+
+    this.toggleBlink = function() {
+    	timeset = setInterval (function() {toggle();}, 500);
+    }
+  }
+
+  var power = false;
+  var l0 = new Lamp('light0');
+  var l1 = new Lamp('light1');
+  var l2 = new Lamp('light2');
+  var l3 = new Lamp('light3');
+  var l4 = new Lamp('light4');
+  var l5 = new Lamp('light5');
+  var l6 = new Lamp('light6');
+  var l7 = new Lamp('light7');
+  var l8 = new Lamp('light8');
+  var l9 = new Lamp('light9');
+  var l10 = new Lamp('light10');
+  var l11 = new Lamp('light11');
+  var l12 = new Lamp('light12');
+  var l13 = new Lamp('light13');
+  var l14 = new Lamp('light14');
+
+  $('#power').click (function() {
+    power = !power;
+    if(power){
+      l0.toggleBlink();
+      l1.toggleBlink();
+      l2.toggleBlink();
+      l3.toggleBlink();
+      l4.toggleBlink();
+      l5.toggleBlink();
+      l6.toggleBlink();
+      l7.toggleBlink();
+      l8.toggleBlink();
+      l9.toggleBlink();
+      l10.toggleBlink();
+      l11.toggleBlink();
+      l12.toggleBlink();
+      l13.toggleBlink();
+      l14.toggleBlink();
+  	} else {
+      l0.off();
+      l1.off();
+      l2.off();
+      l3.off();
+      l4.off();
+      l5.off();
+      l6.off();
+      l7.off();
+      l8.off();
+      l9.off();
+      l10.off();
+      l11.off();
+      l12.off();
+      l13.off();
+      l14.off();
+  	}
+  });
+</script>
+</body>
+</html>
