@@ -12,14 +12,20 @@
 
 請點此連結進入 Homework 首頁！-----> [__我是傳送門__](https://j91157j91157.github.io/3DHW/index.html)
 
-Homework 1 : JavaScript, three.js Basic
+Homework 1 : HTML, CSS, JavaScript
    - [Homework 1 の 傳送門](https://j91157j91157.github.io/3DHW/Xmas%20(HW1).html)
      - This homework is finished！:white_check_mark:
 
 :star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
 
-Homework 2 : ？？？
-  - **~~Homework 2 の 傳送門~~**
+Homework 2 : Class, Spotlight, Shadow map
+   - [Homework 2 の 傳送門](https://j91157j91157.github.io/3DHW/Exhibition%20Room%20(HW2).html)
+     - This homework is finished！:white_check_mark:
+
+:star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
+
+Homework 3 : ？？？
+  - **~~Homework 3 の 傳送門~~**
     - This homework is undone！:no_entry:
 
 :snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake:
