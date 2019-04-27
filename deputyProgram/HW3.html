@@ -1,0 +1,945 @@
+///////////////////////////////////////////////////
+/////////////藝術品 以下function分開寫//////////////
+///////////////////////////////////////////////////
+
+function build_artwork_M16A1() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 100;
+  var height = 100;
+
+  var material = new THREE.MeshPhongMaterial({color: 0x888888});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/M16A1.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(159.4, 75, 210);
+  photoFrame.rotation.x = Math.PI / 2;
+  photoFrame.rotation.z = -Math.PI / 2;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_M4A1() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 100;
+  var height = 100;
+
+  var material = new THREE.MeshPhongMaterial({color: 0x7fff7c});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/M4A1.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(290, 75, 21.9);
+  photoFrame.rotation.x = Math.PI / 2;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_AR15() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 100;
+  var height = 100;
+
+  var material = new THREE.MeshPhongMaterial({color: 0xf18cff});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/AR15.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(80, 75, 21.9);
+  photoFrame.rotation.x = Math.PI / 2;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_M4_SOPMODII() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 100;
+  var height = 100;
+
+  var material = new THREE.MeshPhongMaterial({color: 0xff4949});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/M4 SOPMODII.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(144.4, 75, 210);
+  photoFrame.rotation.x = Math.PI / 2;
+  photoFrame.rotation.z = Math.PI / 2;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_RO635() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 100;
+  var height = 100;
+
+  var material = new THREE.MeshPhongMaterial({color: 0xffff00});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/RO635.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(6.3, 75, -68);
+  photoFrame.rotation.x = Math.PI / 2;
+  photoFrame.rotation.z = Math.PI / 2;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_HK416() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 104;
+  var height = 128;
+
+  var material = new THREE.MeshPhongMaterial({color: 0x87ceeb});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/HK416.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(-265.2, 75, 206.2);
+  photoFrame.rotation.x = Math.PI / 2;
+  photoFrame.rotation.z = Math.PI / 2;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_G11() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 69.5;
+  var height = 100;
+
+  var material = new THREE.MeshPhongMaterial({color: 0xa1b7a1});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/G11.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(-250.2, 75, 206.2);
+  photoFrame.rotation.x = Math.PI / 2;
+  photoFrame.rotation.z = -Math.PI / 2;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_UMP45() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 100;
+  var height = 100;
+
+  var material = new THREE.MeshPhongMaterial({color: 0xf4bc42});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/UMP45.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(-420, 75, 22.1);
+  photoFrame.rotation.x = Math.PI / 2;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_UMP9() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 100;
+  var height = 100;
+
+  var material = new THREE.MeshPhongMaterial({color: 0xce984c});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/UMP9.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(-260, 75, 22.1);
+  photoFrame.rotation.x = Math.PI / 2;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_AN94() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 100;
+  var height = 100;
+
+  var material = new THREE.MeshPhongMaterial({color: 0xaaaaaa});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/AN94.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(290, 75, 6.9);
+  photoFrame.rotation.x = Math.PI / 2;
+  photoFrame.rotation.z = Math.PI;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_AK12() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 100;
+  var height = 100;
+
+  var material = new THREE.MeshPhongMaterial({color: 0xcccccc});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/AK12.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(90, 75, 6.9);
+  photoFrame.rotation.x = Math.PI / 2;
+  photoFrame.rotation.z = Math.PI;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_M99() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 69.5;
+  var height = 100;
+
+  var material = new THREE.MeshPhongMaterial({color: 0xff56c9});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/M99.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(21.3, 75, -60);
+  photoFrame.rotation.x = Math.PI / 2;
+  photoFrame.rotation.z = -Math.PI / 2;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_M14() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 100;
+  var height = 100;
+
+  var material = new THREE.MeshPhongMaterial({color: 0xfc8d55});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/M14.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(101.2, 75, -138.9);
+  photoFrame.rotation.x = Math.PI / 2;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_M1873() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 100;
+  var height = 100;
+
+  var material = new THREE.MeshPhongMaterial({color: 0xffecce});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/M1873.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(196.1, 75, -210);
+  photoFrame.rotation.x = Math.PI / 2;
+  photoFrame.rotation.z = -Math.PI / 2;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_M1891() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 100;
+  var height = 100;
+
+  var material = new THREE.MeshPhongMaterial({color: 0xffd189});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/M1891.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(110, 75, -153.9);
+  photoFrame.rotation.x = Math.PI / 2;
+  photoFrame.rotation.z = Math.PI;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_Negev() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 100;
+  var height = 100;
+
+  var material = new THREE.MeshPhongMaterial({color: 0xf794fc});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/Negev.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(181.1, 75, -220);
+  photoFrame.rotation.x = Math.PI / 2;
+  photoFrame.rotation.z = Math.PI / 2;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_WA2000() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 79;
+  var height = 102;
+
+  var material = new THREE.MeshPhongMaterial({color: 0xba6c1f});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/WA2000.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(-230, 75, -153.9);
+  photoFrame.rotation.x = Math.PI / 2;
+  photoFrame.rotation.z = Math.PI;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_M1918() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 77;
+  var height = 102;
+
+  var material = new THREE.MeshPhongMaterial({color: 0xffd293});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/M1918.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(-237.6, 75, -138.9);
+  photoFrame.rotation.x = Math.PI / 2;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_Suomi() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 100;
+  var height = 100;
+
+  var material = new THREE.MeshPhongMaterial({color: 0x70eeff});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/Suomi.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(-294.5, 75, -215);
+  photoFrame.rotation.x = Math.PI / 2;
+  photoFrame.rotation.z = Math.PI / 2;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_Welrod_MkII() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 100;
+  var height = 100;
+
+  var material = new THREE.MeshPhongMaterial({color: 0xf9d275});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/Welrod Mk II.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(-279.5, 75, -221.9);
+  photoFrame.rotation.x = Math.PI / 2;
+  photoFrame.rotation.z = -Math.PI / 2;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_AA12() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 100;
+  var height = 100;
+
+  var material = new THREE.MeshPhongMaterial({color: 0xc270f9});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/AA12.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(-260, 75, 7.1);
+  photoFrame.rotation.x = Math.PI / 2;
+  photoFrame.rotation.z = Math.PI;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_artwork_SAT8() {
+  var photoFrame = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var width = 100;
+  var height = 100;
+
+  var material = new THREE.MeshPhongMaterial({color: 0xf9b24d});
+  var base = new THREE.Mesh(new THREE.BoxGeometry(width+2, 1, height+2), material);
+  var surface_posx = new THREE.Mesh(new THREE.BoxGeometry(1, 2, height+4), material);
+  var surface_negx = surface_posx.clone();
+  var surface_posz = new THREE.Mesh(new THREE.BoxGeometry(width+2, 2, 1), material);
+  var surface_negz = surface_posz.clone();
+  var file = new THREE.Mesh(new THREE.PlaneGeometry( width, height, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/SAT8.jpg')
+  }));
+
+  base.position.y = 0.5;
+  surface_posx.position.set((width+2)/2+0.5, 1, 0);
+  surface_negx.position.set(-((width+2)/2+0.5), 1, 0);
+  surface_posz.position.set(0, 1, (height+2)/2+0.5);
+  surface_negz.position.set(0, 1, -((height+2)/2+0.5));
+  file.position.y = 1.5;
+  file.rotation.x = -Math.PI / 2;
+
+  photoFrame.position.set(-420, 75, 7.1);
+  photoFrame.rotation.x = Math.PI / 2;
+  photoFrame.rotation.z = Math.PI;
+
+  photoFrame.add(base);
+  photoFrame.add(file);
+  photoFrame.add(surface_posx);
+  photoFrame.add(surface_negx);
+  photoFrame.add(surface_posz);
+  photoFrame.add(surface_negz);
+
+  return photoFrame;
+}
+
+function build_wall_illustration() {
+  var Obj = new THREE.Object3D();
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+
+  var CG1 = new THREE.Mesh(new THREE.PlaneGeometry( 140, 140, 32 ), new THREE.MeshPhongMaterial({map: loader.load('texture/HW3/CG1.png')}));
+  var CG2 = new THREE.Mesh(new THREE.PlaneGeometry( 140, 140, 32 ), new THREE.MeshPhongMaterial({map: loader.load('texture/HW3/CG2.png')}));
+  var CG3 = new THREE.Mesh(new THREE.PlaneGeometry( 225, 135, 32 ), new THREE.MeshPhongMaterial({map: loader.load('texture/HW3/CG3.jpg')}));
+  var CG4 = new THREE.Mesh(new THREE.PlaneGeometry( 140, 140, 32 ), new THREE.MeshPhongMaterial({map: loader.load('texture/HW3/CG4.jpg')}));
+  var CG5 = new THREE.Mesh(new THREE.PlaneGeometry( 140, 140, 32 ), new THREE.MeshPhongMaterial({map: loader.load('texture/HW3/CG5.png')}));
+  var CG6 = new THREE.Mesh(new THREE.PlaneGeometry( 233, 140, 32 ), new THREE.MeshPhongMaterial({map: loader.load('texture/HW3/CG6.jpg')}));
+  var CG7 = new THREE.Mesh(new THREE.PlaneGeometry( 233, 140, 32 ), new THREE.MeshPhongMaterial({map: loader.load('texture/HW3/CG7.jpg')}));
+  var GRIFON = new THREE.Mesh(new THREE.PlaneGeometry( 224, 140, 32 ), new THREE.MeshPhongMaterial({map: loader.load('texture/HW3/GRIFON.png')}));
+  var draw = new THREE.Mesh(new THREE.PlaneGeometry( 187, 140, 32 ), new THREE.MeshPhongMaterial({map: loader.load('texture/HW3/draw.png')}));
+  var wedding = new THREE.Mesh(new THREE.PlaneGeometry( 246, 140, 32 ), new THREE.MeshPhongMaterial({map: loader.load('texture/HW3/wedding.png')}));
+  var Negev_Sick = new THREE.Mesh(new THREE.PlaneGeometry( 104, 140, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/Negev_Sick.png'),
+    transparent: true
+  }));
+  var team404 = new THREE.Mesh(new THREE.PlaneGeometry( 355, 140, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/team404.png'),
+    transparent: true
+  }));
+  var logo = new THREE.Mesh(new THREE.PlaneGeometry( 388.2, 130, 32 ), new THREE.MeshPhongMaterial({
+    map: loader.load('texture/HW3/logo.png'),
+    transparent: true
+  }));
+
+  CG1.rotation.y = -Math.PI;
+  CG2.rotation.y = -Math.PI;
+  CG3.rotation.y = -Math.PI;
+  CG6.rotation.y = -Math.PI/2;
+  CG7.rotation.y = -Math.PI/2;
+  GRIFON.rotation.y = Math.PI/2;
+  wedding.rotation.y = Math.PI/2;
+  logo.rotation.y = -Math.PI;
+
+  CG1.position.set(400, 75, 289);
+  CG2.position.set(260, 75, 289);
+  CG3.position.set(-382, 75, 289);
+  CG4.position.set(276, 75, -289);
+  CG5.position.set(416, 75, -289);
+  CG6.position.set(499, 75, -169);
+  CG7.position.set(499, 75, 69);
+  GRIFON.position.set(-499, 75, 156);
+  draw.position.set(-397, 75, -289);
+  wedding.position.set(-499, 75, -142);
+  Negev_Sick.position.set(126, 70, -289);
+  team404.position.set(-100, 75, -289);
+  logo.position.set(-53, 75, 289);
+
+  Obj.add(CG1);
+  Obj.add(CG2);
+  Obj.add(CG3);
+  Obj.add(CG4);
+  Obj.add(CG5);
+  Obj.add(CG6);
+  Obj.add(CG7);
+  Obj.add(GRIFON);
+  Obj.add(draw);
+  Obj.add(wedding);
+  Obj.add(Negev_Sick);
+  Obj.add(team404);
+  Obj.add(logo);
+
+  return Obj;
+}

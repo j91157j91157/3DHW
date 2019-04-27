@@ -210,20 +210,20 @@
     //scene.add ( new THREE.CameraHelper (roomLight.shadow.camera) );
 
     // exhibits light (編號從左上開始，依序往右邊算，接著再下一排)
-    l1 = new Light(-350, -230);
-    l2 = new Light(-225, -210);
-    l3 = new Light(125, -210);
-    l4 = new Light(254, -210);
-    l5 = new Light(-420, -50);
-    l6 = new Light(-260, -50);
-    l7 = new Light(80, -50);
-    l8 = new Light(290, -50);
-    l9 = new Light(-420, 80);
-    l10 = new Light(-260, 80);
-    l11 = new Light(80, 80);
-    l12 = new Light(290, 80);
-    l13 = new Light(-320, 210);
-    l14 = new Light(218, 210);
+    //l1 = new Light(-350, -230);
+    //l2 = new Light(-225, -210);
+    //l3 = new Light(125, -210);
+    //l4 = new Light(254, -210);
+    //l5 = new Light(-420, -50);
+    //l6 = new Light(-260, -50);
+    //l7 = new Light(80, -50);
+    //l8 = new Light(290, -50);
+    //l9 = new Light(-420, 80);
+    //l10 = new Light(-260, 80);
+    //l11 = new Light(80, 80);
+    //l12 = new Light(290, 80);
+    //l13 = new Light(-320, 210);
+    //l14 = new Light(218, 210);
 
     window.addEventListener('resize', onWindowResize, false);
   }
@@ -377,8 +377,8 @@
     switch (which) {
       case 0:
         renderer.render(scene, camera);
-        //console.log(controls.target);
-        //console.log(camera.position);
+        console.log(controls.target);
+        console.log(camera.position);
         controls.update();
         break;
       case 1:
