@@ -30,8 +30,14 @@ Homework 3 : Raycaster, Multi-Viewport, Tween.js
 
 :star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
 
-Homework 4 : ？？？
-  - **~~Homework 4 の 傳送門~~**
+Homework 4 : Node.js, Shelljs, Native methods
+   - [Homework 4 の 傳送門 (需下載解壓縮後方可執行)](https://github.com/j91157j91157/3DHW/blob/master/Collision%20(HW4).zip)
+     - This homework is finished！:white_check_mark:
+
+:star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
+
+Homework 5 : ？？？
+  - **~~Homework 5 の 傳送門~~**
     - This homework is undone！:no_entry:
 
 :snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake:
