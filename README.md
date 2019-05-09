@@ -31,7 +31,8 @@ Homework 3 : Raycaster, Multi-Viewport, Tween.js
 :star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
 
 Homework 4 : Node.js, Shelljs, Native methods
-   - [Homework 4 の 傳送門 (需下載檔案解壓縮後方可執行)](https://github.com/j91157j91157/3DHW/blob/master/Collision%20(HW4).zip)
+   - [Homework 4 の 傳送門 (需下載檔案解壓縮後方可執行)](https://j91157j91157.github.io/3DHW/Collision%20(HW4).zip)
+     - [YouTube影片連結](https://youtu.be/5Cw-FpjG-KA)
      - This homework is finished！:white_check_mark:
 
 :star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
