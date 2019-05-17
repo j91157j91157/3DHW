@@ -1,0 +1,59 @@
+# Max2Mtl Version 4.0 Mar 10th, 2001
+#
+newmtl 24_-_Default
+Ka  1.0 0.0 0.0
+Kd  1.0 0.0 0.0
+Ks  0.9 0.9 0.9
+d  1.0
+Ns  12.5
+illum 2
+#
+newmtl Material__28
+Ka  0.6 0.6 0.6
+Kd  0.6 0.6 0.6
+Ks  0.9 0.9 0.9
+d  1.0
+Ns  0.0
+illum 2
+#
+newmtl tires
+Ka  0.6 0.6 0.6
+Kd  0.6 0.6 0.6
+Ks  0.9 0.9 0.9
+d  1.0
+Ns  5.4
+illum 2
+#
+newmtl BL
+Ka  0.5 0.5 0.5
+Kd  0.5 0.5 0.5
+Ks  0.9 0.9 0.9
+d  1.0
+Ns  5.6
+illum 2
+#
+newmtl 23_-_Default
+Ka  0.6 0.6 0.6
+Kd  0.6 0.6 0.6
+Ks  0.9 0.9 0.9
+d  0.9
+Ns  2.6
+illum 2
+#
+newmtl 13_-_Default
+Ka  0.6 0.6 0.6
+Kd  0.6 0.6 0.6
+Ks  0.9 0.9 0.9
+d  1.0
+Ns  0.0
+illum 2
+#
+newmtl 22_-_Default
+Ka  0.6 0.6 0.6
+Kd  0.6 0.6 0.6
+Ks  0.9 0.9 0.9
+d  1.0
+Ns  0.0
+illum 2
+#
+# EOF
