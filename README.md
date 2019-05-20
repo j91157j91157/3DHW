@@ -37,8 +37,15 @@ Homework 4 : Node.js, Shelljs, Native methods
 
 :star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
 
-Homework 5 : ？？？
-  - **~~Homework 5 の 傳送門~~**
+Homework 5 : Socket.io, Ngrok, OBJ/MTL Loader
+   - [Homework 5 の 傳送門 (需下載檔案解壓縮後方可執行)](https://j91157j91157.github.io/3DHW/Racing%20(HW5).zip)
+     - [YouTube影片連結](https://youtu.be/FSEcpw9OIKM)
+     - This homework is finished！:white_check_mark:
+
+:star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
+
+Homework 6 : ？？？
+  - **~~Homework 6 の 傳送門~~**
     - This homework is undone！:no_entry:
 
 :snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake:
