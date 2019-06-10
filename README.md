@@ -51,8 +51,8 @@ Homework 6 : AR.js, 2D HUD, Device Compatibility
 :star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
 
 Homework 7 : ？？？
-    - **~~Homework 7 の 傳送門~~**
-      - This homework is undone！:no_entry:
+   - **~~Homework 7 の 傳送門~~**
+     - This homework is undone！:no_entry:
 
 :snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake:
 
