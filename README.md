@@ -44,9 +44,15 @@ Homework 5 : Socket.io, Ngrok, OBJ/MTL Loader
 
 :star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
 
-Homework 6 : ？？？
-  - **~~Homework 6 の 傳送門~~**
-    - This homework is undone！:no_entry:
+Homework 6 : AR.js, 2D HUD, Device Compatibility
+   - [Homework 6 の 傳送門](https://j91157j91157.github.io/3DHW/Ordering%20System%20(HW6).html)
+     - This homework is finished！:white_check_mark:
+
+:star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
+
+Homework 7 : ？？？
+    - **~~Homework 7 の 傳送門~~**
+      - This homework is undone！:no_entry:
 
 :snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake:
 

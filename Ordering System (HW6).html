@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" charset="utf-8">
+<title>請問您今天要來點兔子嗎？</title>
+<link rel="shortcut icon" href="https://i.imgur.com/jnjsKvZ.png">
+<!-- three.js library -->
+<script src="js/three.min.js"></script>
+<script src="js/stats.min.js"></script>
+<script src="https://threejs.org/examples/js/loaders/MTLLoader.js"></script>
+<script src="https://threejs.org/examples/js/loaders/OBJLoader.js"></script>
+<!-- ar.js -->
+<script src="js/ar.min.js"></script>
+
+<style>
+	body {
+    margin: 0px;
+		overflow: hidden;
+    outline : none; /* 避免點選會有藍線或虛線 */
+    -webkit-user-select: none; /* 禁止選取 for Chrome */
+    -moz-user-select: none;  /* 禁止選取 for Firefox */
+	}
+</style>
+
+<body>
+<script>
+// global variables
+var renderer, scene, camera;
+var sceneHUD, cameraHUD;
+var stats;
+var markerRoot;
+var markerHiro;
+var arToolKitSource, arToolKitContext;
+var texture_muffin, texture_donut, texture_toast, texture_waffle;
+var raycaster, pickables;
+var muffin = new THREE.Object3D();
+var donut = new THREE.Object3D();
+var toast = new THREE.Object3D();
+var waffle = new THREE.Object3D();
+var angle = 0;
+
+init();
+animate();
+
+function init() {
+	let _iOSDevice = !!navigator.platform.match(/iPhone|iPod|iPad/);
+	console.log ('iOS: ' + _iOSDevice)
+
+	// init renderer
+	renderer	= new THREE.WebGLRenderer({
+		antialias	: true,
+		alpha: true
+	});
+	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.domElement.style.position = 'absolute'
+	renderer.domElement.style.top = '0px'
+	renderer.domElement.style.left = '0px'
+	document.body.appendChild( renderer.domElement );
+
+	// for multi-pass rendering
+	renderer.autoClear = false;
+
+	//renderer shadow
+	renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+	raycaster = new THREE.Raycaster();
+	pickables = [];
+	// init scene and camera
+	scene	= new THREE.Scene();
+	camera = new THREE.Camera();
+	scene.add(camera);
+
+	sceneHUD = new THREE.Scene();
+	cameraHUD = new THREE.OrthographicCamera (-10,10,10,-10, -10,10);
+
+	////////////////////////////////////
+	var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin ('');
+	///////////// 選取按鈕 /////////////
+	var geometry = new THREE.Geometry();
+  geometry.vertices.push(
+		new THREE.Vector3(-1, 1, 0),//左上
+    new THREE.Vector3(-1, -1, 0),//左下
+    new THREE.Vector3(1, -1, 0),//右下
+    new THREE.Vector3(1, 1, 0)//右上
+  );
+  var face = new THREE.Face3(0, 1, 2);
+  face.materialIndex = 0;
+  geometry.faces.push(face);
+  face = new THREE.Face3(0, 2, 3);
+  face.materialIndex = 0;
+  geometry.faces.push(face);
+
+	geometry.faceVertexUvs[0].push([new THREE.Vector2(0, 1), new THREE.Vector2(0, 0), new THREE.Vector2(1, 0)]);
+  geometry.faceVertexUvs[0].push([new THREE.Vector2(0, 1), new THREE.Vector2(1, 0), new THREE.Vector2(1, 1)]);
+
+  geometry.computeBoundingSphere();
+  geometry.computeFaceNormals();
+  geometry.computeVertexNormals();
+
+  texture_muffin = new THREE.Mesh (geometry, new THREE.MeshBasicMaterial({map: loader.load('texture/HW6/muffin.png'), transparent: true}));
+	texture_donut = new THREE.Mesh (geometry, new THREE.MeshBasicMaterial({map: loader.load('texture/HW6/donut.png'), transparent: true}));
+	texture_toast = new THREE.Mesh (geometry, new THREE.MeshBasicMaterial({map: loader.load('texture/HW6/toast.png'), transparent: true}));
+	texture_waffle = new THREE.Mesh (geometry, new THREE.MeshBasicMaterial({map: loader.load('texture/HW6/waffle.png'), transparent: true}));
+
+	texture_muffin.position.set(9, 4.5, 0);
+	texture_donut.position.set(9, 1.5, 0);
+	texture_toast.position.set(9, -1.5, 0);
+	texture_waffle.position.set(9, -4.5, 0);
+
+	sceneHUD.add(texture_muffin);
+	sceneHUD.add(texture_donut);
+	sceneHUD.add(texture_toast);
+	sceneHUD.add(texture_waffle);
+
+	////////////////////////////////////////////////////////////////////////////////
+	//          handle arToolkitSource
+	////////////////////////////////////////////////////////////////////////////////
+	arToolkitSource = new THREEx.ArToolkitSource({
+		sourceType : 'webcam'
+	})
+	arToolkitSource.init(function onReady(){
+		onResize()
+	})
+
+	// handle resize
+	window.addEventListener('resize', function(){
+		onResize()
+	})
+	function onResize(){
+		arToolkitSource.onResizeElement();
+		arToolkitSource.copyElementSizeTo(renderer.domElement);
+		if( arToolkitContext.arController !== null ){
+			arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
+		}
+	}
+	////////////////////////////////////////////////////////////////////////////////
+	//          initialize arToolkitContext
+	////////////////////////////////////////////////////////////////////////////////
+
+	arToolkitContext = new THREEx.ArToolkitContext({
+		cameraParametersUrl: 'deputyProgram/camera_para.dat',
+		detectionMode: 'mono',
+		maxDetectionRate: 30,
+		canvasWidth: 80*3,
+		canvasHeight: 60*3,
+	})
+	// initialize it
+	arToolkitContext.init(function onCompleted(){
+		// copy projection matrix to camera
+		camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+	})
+
+	markerRoot = new THREE.Group()
+	scene.add(markerRoot)
+	var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
+		type: 'pattern',
+		patternUrl: 'deputyProgram/patt.hiro'
+	})
+
+	markerRoot.add( new THREE.AmbientLight( 0xffffff ) );
+
+	var light = new THREE.DirectionalLight( 'white', 1 );
+	light.position.set( 25, 100, -25 );
+	markerRoot.add( light );
+
+	light.castShadow = true;
+  light.shadow.mapSize.set(1024,1024);
+	light.shadow.camera.near = 50;
+	light.shadow.camera.far = 500;
+
+	var gridXZ = new THREE.GridHelper(100, 10, 'red', 'white');
+  //markerRoot.add(unitize (gridXZ, 1));
+
+	var axes = new THREE.AxisHelper(100);
+  //markerRoot.add(unitize (axes, 1));
+
+	//Marker hidden
+	var marker_hidden = markerHide();
+	markerRoot.add(marker_hidden);
+
+	// model muffin
+	var onProgress = function(xhr) {
+		if (xhr.lengthComputable) {
+			var percentComplete = xhr.loaded / xhr.total * 100;
+			console.log(Math.round(percentComplete, 2) + '% downloaded');
+		}
+	};
+	var onError = function(xhr) {};
+	var mtlLoader = new THREE.MTLLoader();
+	mtlLoader.setPath('../model/HW6/');
+	mtlLoader.load('Blueberry_Muffin.mtl', function(materials) {
+		materials.preload();
+		var objLoader = new THREE.OBJLoader();
+		objLoader.setMaterials(materials);
+		objLoader.setPath('../model/HW6/');
+		objLoader.load('Blueberry_Muffin.obj', function(object) {
+			muffin.add(unitize (object, .5));
+			muffin.visible = false;
+			muffin.traverse (
+			 function (mesh) {
+					if (mesh instanceof THREE.Mesh) {
+						mesh.castShadow = true;
+						mesh.receiveShadow = true;
+					}
+				}
+			);
+			markerRoot.add(muffin);
+			object.traverse (
+				function(mesh) {
+					if (mesh instanceof THREE.Mesh) {
+						mesh.material.side = THREE.DoubleSide;
+					}
+			});
+		}, onProgress, onError);
+	});
+
+	//model donut
+	mtlLoader.setPath('../model/HW6/');
+	mtlLoader.load('donut.mtl', function(materials) {
+		materials.preload();
+		var objLoader = new THREE.OBJLoader();
+		objLoader.setMaterials(materials);
+		objLoader.setPath('../model/HW6/');
+		objLoader.load('donut.obj', function(object) {
+			donut.add(unitize (object, .5));
+			donut.position.y = .1;
+			donut.visible = false;
+			donut.traverse (
+			 function (mesh) {
+					if (mesh instanceof THREE.Mesh) {
+						mesh.castShadow = true;
+						mesh.receiveShadow = true;
+					}
+				}
+			);
+			markerRoot.add(donut);
+			object.traverse (
+				function(mesh) {
+					if (mesh instanceof THREE.Mesh) {
+						mesh.material.side = THREE.DoubleSide;
+					}
+			});
+		}, onProgress, onError);
+	});
+
+	//model toast
+	mtlLoader.setPath('../model/HW6/');
+	mtlLoader.load('Toast.mtl', function(materials) {
+		materials.preload();
+		var objLoader = new THREE.OBJLoader();
+		objLoader.setMaterials(materials);
+		objLoader.setPath('../model/HW6/');
+		objLoader.load('Toast.obj', function(object) {
+			toast.add(unitize (object, .5));
+			toast.visible = false;
+			toast.traverse (
+			 function (mesh) {
+					if (mesh instanceof THREE.Mesh) {
+						mesh.castShadow = true;
+						mesh.receiveShadow = true;
+					}
+				}
+			);
+			markerRoot.add(toast);
+			object.traverse (
+				function(mesh) {
+					if (mesh instanceof THREE.Mesh) {
+						mesh.material.side = THREE.DoubleSide;
+					}
+			});
+		}, onProgress, onError);
+	});
+
+	//model waffle
+	mtlLoader.setPath('../model/HW6/');
+	mtlLoader.load('waffle.mtl', function(materials) {
+		materials.preload();
+		var objLoader = new THREE.OBJLoader();
+		objLoader.setMaterials(materials);
+		objLoader.setPath('../model/HW6/');
+		objLoader.load('waffle.obj', function(object) {
+			waffle.add(unitize (object, .6));
+			waffle.position.y = .05;
+			waffle.visible = false;
+			waffle.traverse (
+			 function (mesh) {
+					if (mesh instanceof THREE.Mesh) {
+						mesh.castShadow = true;
+						mesh.receiveShadow = true;
+					}
+				}
+			);
+			markerRoot.add(waffle);
+			object.traverse (
+				function(mesh) {
+					if (mesh instanceof THREE.Mesh) {
+						mesh.material.side = THREE.DoubleSide;
+					}
+			});
+		}, onProgress, onError);
+	});
+
+	//FPS
+	stats = new Stats();
+	document.body.appendChild( stats.dom );
+
+	//iOS touch介面?
+	if (_iOSDevice)
+		window.addEventListener('touchstart', onTouchStart, false)
+	else
+		window.addEventListener ('mousedown', onMouseDown, false);
+}
+
+
+function animate() {
+	requestAnimationFrame (animate);
+
+	if( arToolkitSource.ready === false )	return
+	arToolkitContext.update( arToolkitSource.domElement )
+
+	///////////////////////////////////////////
+	angle += 0.01;
+  muffin.rotation.y = -angle;
+	donut.rotation.y = -angle;
+	toast.rotation.y = -angle;
+	waffle.rotation.y = -angle;
+
+	texture_muffin.material.visible = markerRoot.visible;
+	texture_donut.material.visible = markerRoot.visible;
+	texture_toast.material.visible = markerRoot.visible;
+	texture_waffle.material.visible = markerRoot.visible;
+
+	renderer.clear();
+	renderer.render (scene, camera);
+	renderer.render (sceneHUD, cameraHUD);
+	stats.update();
+}
+
+function onTouchStart (event) {
+	console.log ('in touch start');
+	if(event.touches.length == 1) {
+
+		event.preventDefault();
+		let touchX = (event.touches[0].pageX / window.innerWidth) * 2 - 1;
+		let touchY = -(event.touches[0].pageY / window.innerHeight) * 2 + 1;
+
+		if(markerRoot.visible === true){
+			if(touchX < 1 && touchX > 0.80 && touchY < 0.74 && touchY > 0.54){
+				muffin.visible = true;
+				donut.visible = false;
+				toast.visible = false;
+				waffle.visible = false;
+				texture_muffin.material.opacity = .5;
+				texture_donut.material.opacity = 1;
+				texture_toast.material.opacity = 1;
+				texture_waffle.material.opacity = 1;
+	  	}
+			if(touchX < 1 && touchX > 0.80 && touchY < 0.34 && touchY > 0.06){
+				muffin.visible = false;
+				donut.visible = true;
+				toast.visible = false;
+				waffle.visible = false;
+				texture_muffin.material.opacity = 1;
+				texture_donut.material.opacity = .5;
+				texture_toast.material.opacity = 1;
+				texture_waffle.material.opacity = 1;
+	  	}
+			if(touchX < 1 && touchX > 0.80 && touchY < -0.06 && touchY > -0.34){
+				muffin.visible = false;
+				donut.visible = false;
+				toast.visible = true;
+				waffle.visible = false;
+				texture_muffin.material.opacity = 1;
+				texture_donut.material.opacity = 1;
+				texture_toast.material.opacity = .5;
+				texture_waffle.material.opacity = 1;
+	  	}
+			if(touchX < 1 && touchX > 0.80 && touchY < -0.54 && touchY > -0.74){
+				muffin.visible = false;
+				donut.visible = false;
+				toast.visible = false;
+				waffle.visible = true;
+				texture_muffin.material.opacity = 1;
+				texture_donut.material.opacity = 1;
+				texture_toast.material.opacity = 1;
+				texture_waffle.material.opacity = .5;
+	  	}
+		}
+	}
+}
+
+function onMouseDown (event) {
+	event.preventDefault();
+	let mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+	let mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+
+	if(markerRoot.visible === true){
+		if(mouseX < 1 && mouseX > 0.80 && mouseY < 0.84 && mouseY > 0.54){
+			muffin.visible = true;
+			donut.visible = false;
+			toast.visible = false;
+			waffle.visible = false;
+			texture_muffin.material.opacity = .5;
+			texture_donut.material.opacity = 1;
+			texture_toast.material.opacity = 1;
+			texture_waffle.material.opacity = 1;
+  	}
+		if(mouseX < 1 && mouseX > 0.80 && mouseY < 0.38 && mouseY > 0.08){
+			muffin.visible = false;
+			donut.visible = true;
+			toast.visible = false;
+			waffle.visible = false;
+			texture_muffin.material.opacity = 1;
+			texture_donut.material.opacity = .5;
+			texture_toast.material.opacity = 1;
+			texture_waffle.material.opacity = 1;
+  	}
+		if(mouseX < 1 && mouseX > 0.80 && mouseY < -0.08 && mouseY > -0.38){
+			muffin.visible = false;
+			donut.visible = false;
+			toast.visible = true;
+			waffle.visible = false;
+			texture_muffin.material.opacity = 1;
+			texture_donut.material.opacity = 1;
+			texture_toast.material.opacity = .5;
+			texture_waffle.material.opacity = 1;
+  	}
+		if(mouseX < 1 && mouseX > 0.80 && mouseY < -0.54 && mouseY > -0.84){
+			muffin.visible = false;
+			donut.visible = false;
+			toast.visible = false;
+			waffle.visible = true;
+			texture_muffin.material.opacity = 1;
+			texture_donut.material.opacity = 1;
+			texture_toast.material.opacity = 1;
+			texture_waffle.material.opacity = .5;
+  	}
+	}
+}
+
+function markerHide(){
+	var plane = new THREE.Object3D();
+	var material = new THREE.MeshStandardMaterial({color: 0xdddddd});
+	var geometry = new THREE.PlaneGeometry(1.1, 1.1); //marker顯示誤差會沒辦法隱藏全部，因此設大一點比較保險。
+	var mesh = new THREE.Mesh(geometry, material);
+	mesh.rotation.x = -Math.PI/2;
+	mesh.receiveShadow = true;
+	plane.add (mesh);
+	return plane;
+}
+
+function unitize (object, targetSize) {
+	// find bounding box of 'object'
+	var box3 = new THREE.Box3();
+	box3.setFromObject (object);
+	var size = new THREE.Vector3();
+	size.subVectors (box3.max, box3.min);
+	var center = new THREE.Vector3();
+	center.addVectors(box3.max, box3.min).multiplyScalar (0.5);
+	console.log ('center: ' + center.x + ', '+center.y + ', '+center.z );
+	console.log ('size: ' + size.x + ', ' +  size.y + ', '+size.z );
+	// uniform scaling according to objSize
+	var objSize = Math.max (size.x, size.y, size.z);
+	var scaleSet = targetSize/objSize;
+	var theObject =  new THREE.Object3D();
+	theObject.add (object);
+	object.scale.set (scaleSet, scaleSet, scaleSet);
+	//object.position.set (-center.x*scaleSet, -center.y*scaleSet + size.y/2*scaleSet, -center.z*scaleSet);
+	return theObject;
+}
+</script>
+</body>
