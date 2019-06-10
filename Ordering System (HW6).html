@@ -188,12 +188,12 @@ function init() {
 	};
 	var onError = function(xhr) {};
 	var mtlLoader = new THREE.MTLLoader();
-	mtlLoader.setPath('../model/HW6/');
+	mtlLoader.setPath('model/HW6/');
 	mtlLoader.load('Blueberry_Muffin.mtl', function(materials) {
 		materials.preload();
 		var objLoader = new THREE.OBJLoader();
 		objLoader.setMaterials(materials);
-		objLoader.setPath('../model/HW6/');
+		objLoader.setPath('model/HW6/');
 		objLoader.load('Blueberry_Muffin.obj', function(object) {
 			muffin.add(unitize (object, .5));
 			muffin.visible = false;
@@ -216,12 +216,12 @@ function init() {
 	});
 
 	//model donut
-	mtlLoader.setPath('../model/HW6/');
+	mtlLoader.setPath('model/HW6/');
 	mtlLoader.load('donut.mtl', function(materials) {
 		materials.preload();
 		var objLoader = new THREE.OBJLoader();
 		objLoader.setMaterials(materials);
-		objLoader.setPath('../model/HW6/');
+		objLoader.setPath('model/HW6/');
 		objLoader.load('donut.obj', function(object) {
 			donut.add(unitize (object, .5));
 			donut.position.y = .1;
@@ -245,12 +245,12 @@ function init() {
 	});
 
 	//model toast
-	mtlLoader.setPath('../model/HW6/');
+	mtlLoader.setPath('model/HW6/');
 	mtlLoader.load('Toast.mtl', function(materials) {
 		materials.preload();
 		var objLoader = new THREE.OBJLoader();
 		objLoader.setMaterials(materials);
-		objLoader.setPath('../model/HW6/');
+		objLoader.setPath('model/HW6/');
 		objLoader.load('Toast.obj', function(object) {
 			toast.add(unitize (object, .5));
 			toast.visible = false;
@@ -273,12 +273,12 @@ function init() {
 	});
 
 	//model waffle
-	mtlLoader.setPath('../model/HW6/');
+	mtlLoader.setPath('model/HW6/');
 	mtlLoader.load('waffle.mtl', function(materials) {
 		materials.preload();
 		var objLoader = new THREE.OBJLoader();
 		objLoader.setMaterials(materials);
-		objLoader.setPath('../model/HW6/');
+		objLoader.setPath('model/HW6/');
 		objLoader.load('waffle.obj', function(object) {
 			waffle.add(unitize (object, .6));
 			waffle.position.y = .05;
