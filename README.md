@@ -46,6 +46,7 @@ Homework 5 : Socket.io, Ngrok, OBJ/MTL Loader
 
 Homework 6 : AR.js, 2D HUD, Device Compatibility
    - [Homework 6 の 傳送門](https://j91157j91157.github.io/3DHW/Ordering%20System%20(HW6).html)
+     - [Bonus](https://j91157j91157.github.io/3DHW/Tilt%20Labyrinth%20(Bonus).html)
      - This homework is finished！:white_check_mark:
 
 :star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
