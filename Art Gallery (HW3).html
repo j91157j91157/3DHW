@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ドールズフロントライン特展</title>
+  <link rel="shortcut icon" href="https://i.imgur.com/jnjsKvZ.png">
+</head>
+
+<script src="https://threejs.org/build/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="js/tween.min.js"></script>
+<!-- https://threejs.org/examples/js/libs/tween.min.js 已失效！ -->
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="deputyProgram/HW3.html"></script>
+<link rel=stylesheet type="text/css" href="deputyProgram/HW3.css">
+<div id="info">
+  <a href="texture/HW3/2D design layout.png">2D Design Layout</a><br>
+  <select id="artwork">
+    <option value="" disabled selected>---請選擇槍種---</option>
+    <option value="AA12">AA-12</option>
+    <option value="AK12">AK-12</option>
+    <option value="AN94">AN-94</option>
+    <option value="AR15">AR-15</option>
+    <option value="G11">G11</option>
+    <option value="HK416">HK416</option>
+    <option value="M4_SOPMODII">M4 SOPMODII</option>
+    <option value="M4A1">M4A1</option>
+    <option value="M14">M14</option>
+    <option value="M16A1">M16A1</option>
+    <option value="M99">M99</option>
+    <option value="M1918">M1918</option>
+    <option value="RO635">RO635</option>
+    <option value="SAT8">S.A.T.8</option>
+    <option value="UMP9">UMP9</option>
+    <option value="UMP45">UMP45</option>
+    <option value="WA2000">WA2000</option>
+    <option value="Negev">內蓋夫</option>
+    <option value="M1873">柯爾特左輪</option>
+    <option value="Suomi">索米</option>
+    <option value="M1891">莫辛-納甘</option>
+    <option value="Welrod_MkII">維爾德Mk II</option>
+  </select>
+  <select id="camera">
+    <option value="camera1" selected>Camera 1</option>
+    <option value="camera2">Camera 2</option>
+    <option value="camera3">Camera 3</option>
+    <option value="camera4">Camera 4</option>
+  </select>
+  <button id="roomLight">Room Light</button><br>
+  <button id="light">Exhibits Light</button>
+  <input id='light_range' type='range' min=0 max=1 value=0 step="any"><br>
+  <button id="right">→</button>
+  <button id="left">←</button>
+  <div id="text">
+    <h2 id="name"></h2>
+    <p id="directions"></p>
+  </div>
+</div>
+
+<body>
+<script>
+  class Light {
+    constructor(x, z) {
+      this.on = false;
+      this.x = x;
+      this.z = z;
+      this.obj = this.makeLight();
+      this.lamoshade = this.makeLampshade();
+    }
+
+    get isOn() {
+      return this.on;
+    }
+
+    toggle() {
+      this.on = !this.on;
+      this.update();
+     }
+
+    update() {
+      if (this.on) {
+        this.obj.intensity = 1;
+        this.obj.castShadow = true;
+      } else {
+        this.obj.intensity = 0;
+        this.obj.castShadow = false;
+      }
+    }
+
+    makeLight(){
+      let light = new THREE.SpotLight(0xdddddd); //ffffff，圖畫掛上去之後再看看要不要調整(太亮之類的)。
+      light.position.set(this.x, 250, this.z);
+      light.target.position.set(this.x, 0, this.z);
+      light.target.updateMatrixWorld();
+
+      light.angle = Math.PI/6;
+      light.penumbra = 0.25;
+      light.intensity = 0;
+
+      light.castShadow = true; //太多燈了，light超過15個three.js承受不了！
+      light.shadow.mapSize.width = 512;
+      light.shadow.mapSize.height = 512;
+
+      light.shadow.camera.near = 50
+      light.shadow.camera.far = 400;
+      light.shadow.camera.fov = 60;
+      light.shadow.bias = 0.001;
+      scene.add(light);
+      //scene.add(new THREE.SpotLightHelper(light));
+      //scene.add(new THREE.CameraHelper (light.shadow.camera));
+      return light;
+    }
+
+    makeLampshade(){
+      let points = [];
+      for ( let i = 0; i < 10; i ++ ) {
+        points.push( new THREE.Vector2( Math.sin( i * 0.2 ) * 15 + 3, ( i - 5 ) * 2 ) );
+      }
+      let geometry = new THREE.LatheGeometry(points, 20);
+      let material = new THREE.MeshPhongMaterial({color: 0xfcf6e0});
+      let lathe = new THREE.Mesh(geometry, material);
+      lathe.position.set(this.x, 250, this.z);
+      lathe.rotation.x = -Math.PI;
+      scene.add(lathe);
+      return lathe;
+    }
+  }
+
+  var renderer, scene;
+  var camera, camera1, camera2, camera3, camera4;
+  var controls;
+  var roomLight, l1, l2, l3, l4, l5, l7, l8, l9, l10, l11, l12, l13, l14;
+  var toggleRoom = true;
+  var whichCamera = 0;
+  var mouse = new THREE.Vector2();
+  var raycaster = new THREE.Raycaster();
+  var pickables = [];
+
+  init();
+  animate();
+
+  $('#camera').change( function() {
+  	let objType = $(this).val();
+    if (objType === 'camera1') {
+      //camera.position.set(0, 753, -195);
+      // 不可使用camera.lookAt (vetcor)，因為會被OrbitControls給覆蓋掉，應該直接更改OrbitControls裡的target
+      //controls.target = new THREE.Vector3(0, 0, -201);
+      whichCamera = 0;
+    }
+    else if (objType === 'camera2') {
+      whichCamera = 1;
+    }
+    else if (objType === 'camera3') {
+      whichCamera = 2;
+    }
+    else if (objType === 'camera4') {
+      whichCamera = 3;
+    }
+  });
+  $('#artwork').change( function() {
+  	let objType = $(this).val();
+    if (objType === 'M16A1') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: 272.68,
+        py: 123.11,
+        pz: 209.23,
+        tx: -1618.31,
+        ty: 3.27,
+        tz: 202.68
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'M4A1') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: 291.63,
+        py: 117.98,
+        pz: 125.96,
+        tx: 291.63,
+        ty: -8.60,
+        tz: -1972.54
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'AR15') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: 81.34,
+        py: 117.98,
+        pz: 125.96,
+        tx: 81.34,
+        ty: -8.60,
+        tz: -1972.54
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'M4_SOPMODII') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: 41.11,
+        py: 115.33,
+        pz: 213.45,
+        tx: 3048.95,
+        ty: -8.60,
+        tz: 195.51
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'RO635') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: -109.19,
+        py: 114.91,
+        pz: -67.27,
+        tx: 5753.87,
+        ty: -8.60,
+        tz: -51.68
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'HK416') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: -402.76,
+        py: 126.07,
+        pz: 209.09,
+        tx: 4371.90,
+        ty: -8.60,
+        tz: 212.65
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'G11') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: -136.82,
+        py: 115.63,
+        pz: 206.97,
+        tx: -6625.17,
+        ty: 3.27,
+        tz: 184.49
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'UMP45') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: -422.17,
+        py: 119.83,
+        pz: 131.76,
+        tx: -422.17,
+        ty: -8.60,
+        tz: -2725.29
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'UMP9') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: -258.28,
+        py: 119.83,
+        pz: 131.76,
+        tx: -258.28,
+        ty: -8.60,
+        tz: -2725.30
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'AN94') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: 292.50,
+        py: 117.54,
+        pz: -104.21,
+        tx: 290.29,
+        ty: -8.60,
+        tz: 2903.55
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'AK12') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: 87.62,
+        py: 117.54,
+        pz: -104.36,
+        tx: 85.40,
+        ty: -8.60,
+        tz: 2903.40
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'M99') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: 134.90,
+        py: 117.69,
+        pz: -59.77,
+        tx: -3369.76,
+        ty: 3.27,
+        tz: -71.90
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'M14') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: 101.03,
+        py: 115.45,
+        pz: -27.22,
+        tx: 101.03,
+        ty: -8.60,
+        tz: -3536.30
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'M1873') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: 301.21,
+        py: 115.18,
+        pz: -212.91,
+        tx: -2409.76,
+        ty: 3.27,
+        tz: -204.12
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'M1891') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: 108.87,
+        py: 118.00,
+        pz: -260.37,
+        tx: 110.51,
+        ty: -8.60,
+        tz: 1948.91
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'Negev') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: 79.29,
+        py: 114.93,
+        pz: -220.12,
+        tx: 2657.37,
+        ty: -8.60,
+        tz: -230.55
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'WA2000') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: -229.82,
+        py: 114.15,
+        pz: -269.75,
+        tx: -266.61,
+        ty: -8.60,
+        tz: 5901.86
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'M1918') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: -235.63,
+        py: 114.43,
+        pz: -23.44,
+        tx: -235.63,
+        ty: -8.60,
+        tz: -5886.57
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'Suomi') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: -400.27,
+        py: 112.97,
+        pz: -215.25,
+        tx: 4890.90,
+        ty: -8.60,
+        tz: -211.31
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'Welrod_MkII') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: -162.22,
+        py: 117.14,
+        pz: -218.07,
+        tx: -4250.48,
+        ty: 3.27,
+        tz: -204.82
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'AA12') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: -258.00,
+        py: 116.71,
+        pz: -100.76,
+        tx: -264.09,
+        ty: -8.60,
+        tz: 2756.36
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+    else if (objType === 'SAT8') {
+      var from = {
+        px: camera.position.x,
+        py: camera.position.y,
+        pz: camera.position.z,
+        tx: controls.target.x,
+        ty: controls.target.y,
+        tz: controls.target.z
+      };
+      var to = {
+        px: -418.98,
+        py: 116.71,
+        pz: -101.10,
+        tx: -425.07,
+        ty: -8.60,
+        tz: 2756.02
+      };
+      var tween = new TWEEN.Tween(from)
+        .to(to, 3000)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(function () {
+        camera.position.set(this.px, this.py, this.pz);
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .onComplete(function () {
+        controls.target.set(this.tx, this.ty, this.tz);
+      })
+        .start();
+    }
+  });
+  $('#right').click (function() {
+    if(whichCamera === 0) camera1.rotation.y -= 0.1;
+    else if(whichCamera === 1) camera2.rotation.y -= 0.1;
+    else if(whichCamera === 2) camera3.rotation.y -= 0.1;
+    else if(whichCamera === 3) camera4.rotation.y -= 0.1;
+  });
+  $('#left').click (function() {
+    if(whichCamera === 0) camera1.rotation.y += 0.1;
+    else if(whichCamera === 1) camera2.rotation.y += 0.1;
+    else if(whichCamera === 2) camera3.rotation.y += 0.1;
+    else if(whichCamera === 3) camera4.rotation.y += 0.1;
+  });
+  $('#roomLight').click (function() {
+    toggleRoom = !toggleRoom;
+  });
+  $('#light').click (function() {
+    l1.toggle(); l2.toggle();
+    l3.toggle(); l4.toggle();
+    l5.toggle(); l6.toggle();
+    l7.toggle(); l8.toggle();
+    l9.toggle(); l10.toggle();
+    l11.toggle(); l12.toggle();
+    l13.toggle(); l14.toggle();
+  });
+  $('#light_range').change( function(){
+    l1.obj.intensity = $(this).val(); l2.obj.intensity = $(this).val();
+    l3.obj.intensity = $(this).val(); l4.obj.intensity = $(this).val();
+    l5.obj.intensity = $(this).val(); l6.obj.intensity = $(this).val();
+    l7.obj.intensity = $(this).val(); l8.obj.intensity = $(this).val();
+    l9.obj.intensity = $(this).val(); l10.obj.intensity = $(this).val();
+    l11.obj.intensity = $(this).val(); l12.obj.intensity = $(this).val();
+    l13.obj.intensity = $(this).val(); l14.obj.intensity = $(this).val();
+  });
+
+  function init() {
+
+    renderer = new THREE.WebGLRenderer({
+      antialias: true
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x404040);
+    document.body.appendChild(renderer.domElement);
+
+    // camera
+    camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 1, 1500);
+    camera1 = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 1, 1500);
+    camera2 = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 1, 1500);
+    camera3 = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 1, 1500);
+    camera4 = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 1, 1500);
+
+    camera.position.set(0, 753, -195);
+    //camera1.position.set(478, 108, 236);
+    camera1.position.set(-48.66, 130.10, -320.07);
+    camera2.position.set(-47.75, 130.10, 320.77);
+    camera3.position.set(509.66, 100, 17.95);
+    camera4.position.set(-569, 130.10, 16.23);
+
+    camera1.rotation.y = Math.PI;
+    camera3.rotation.y = Math.PI/2;
+    camera4.rotation.y = -Math.PI/2;
+    //camera1.lookAt (new THREE.Vector3(137, 0, 1)); //rotation camera 會怪怪的。
+
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.target = new THREE.Vector3(0, 0, -201);
+
+    scene = new THREE.Scene();
+
+    let axes = new THREE.AxisHelper(500);
+    //scene.add(axes);
+
+    let gridXZ = new THREE.GridHelper(200, 20, 'red', 'white');
+    //scene.add(gridXZ);
+
+    // exhibition room
+    var room = build();
+  	scene.add(room);
+
+    // lighting
+    var light = new THREE.AmbientLight(0x505050); // soft white light
+    scene.add(light);
+
+    // room light
+    roomLight = new THREE.SpotLight(0xffffff);
+    roomLight.angle = Math.PI / 2.5;
+    roomLight.penumbra = 0.25;
+
+    roomLight.castShadow = true;
+    roomLight.shadow.mapSize.width = 1024;
+    roomLight.shadow.mapSize.height = 1024;
+
+    roomLight.shadow.camera.near = 200;
+    roomLight.shadow.camera.far = 500;
+    roomLight.shadow.camera.fov = 150;
+    roomLight.shadow.bias = 0.001;
+
+    roomLight.position.set(-25, 450, 25);
+
+    scene.add(roomLight);
+    //scene.add(new THREE.SpotLightHelper(roomLight));
+    //scene.add ( new THREE.CameraHelper (roomLight.shadow.camera) );
+
+    // exhibits light (編號從左上開始，依序往右邊算，接著再下一排)
+    l1 = new Light(-350, -218);
+    l2 = new Light(-225, -210);
+    l3 = new Light(125, -210);
+    l4 = new Light(254, -210);
+    l5 = new Light(-420, -50);
+    l6 = new Light(-260, -50);
+    l7 = new Light(80, -50);
+    l8 = new Light(290, -50);
+    l9 = new Light(-420, 80);
+    l10 = new Light(-260, 80);
+    l11 = new Light(80, 80);
+    l12 = new Light(290, 80);
+    l13 = new Light(-320, 210);
+    l14 = new Light(218, 210);
+
+    // artwork
+    var artwork_M16A1 = build_artwork_M16A1();
+    var artwork_M4A1 = build_artwork_M4A1();
+    var artwork_AR15 = build_artwork_AR15();
+    var artwork_M4_SOPMODII = build_artwork_M4_SOPMODII();
+    var artwork_RO635 = build_artwork_RO635();
+    var artwork_HK416 = build_artwork_HK416();
+    var artwork_G11 = build_artwork_G11();
+    var artwork_UMP45 = build_artwork_UMP45();
+    var artwork_UMP9 = build_artwork_UMP9();
+    var artwork_AN94 = build_artwork_AN94();
+    var artwork_AK12 = build_artwork_AK12();
+    var artwork_M99 = build_artwork_M99();
+    var artwork_M14 = build_artwork_M14();
+    var artwork_M1873 = build_artwork_M1873();
+    var artwork_M1891 = build_artwork_M1891();
+    var artwork_Negev = build_artwork_Negev();
+    var artwork_WA2000 = build_artwork_WA2000();
+    var artwork_M1918 = build_artwork_M1918();
+    var artwork_Suomi = build_artwork_Suomi();
+    var artwork_Welrod_MkII = build_artwork_Welrod_MkII();
+    var artwork_AA12 = build_artwork_AA12();
+    var artwork_SAT8 = build_artwork_SAT8();
+
+    artwork_M16A1.name = "M16A1";
+    artwork_M4A1.name = "M4A1";
+    artwork_AR15.name = "AR15";
+    artwork_M4_SOPMODII.name = "M4_SOPMODII";
+    artwork_RO635.name = "RO635";
+    artwork_HK416.name = "HK416";
+    artwork_G11.name = "G11";
+    artwork_UMP45.name = "UMP45";
+    artwork_UMP9.name = "UMP9";
+    artwork_AN94.name = "AN94";
+    artwork_AK12.name = "AK12";
+    artwork_M99.name = "M99";
+    artwork_M14.name = "M14";
+    artwork_M1873.name = "M1873";
+    artwork_M1891.name = "M1891";
+    artwork_Negev.name = "Negev";
+    artwork_WA2000.name = "WA2000";
+    artwork_M1918.name = "M1918";
+    artwork_Suomi.name = "Suomi";
+    artwork_Welrod_MkII.name = "Welrod_MkII";
+    artwork_AA12.name = "AA12";
+    artwork_SAT8.name = "SAT8";
+
+    scene.add(artwork_M16A1);
+    scene.add(artwork_M4A1);
+    scene.add(artwork_AR15);
+    scene.add(artwork_M4_SOPMODII);
+    scene.add(artwork_RO635);
+    scene.add(artwork_HK416);
+    scene.add(artwork_G11);
+    scene.add(artwork_UMP45);
+    scene.add(artwork_UMP9);
+    scene.add(artwork_AN94);
+    scene.add(artwork_AK12);
+    scene.add(artwork_M99);
+    scene.add(artwork_M14);
+    scene.add(artwork_M1873);
+    scene.add(artwork_M1891);
+    scene.add(artwork_Negev);
+    scene.add(artwork_WA2000);
+    scene.add(artwork_M1918);
+    scene.add(artwork_Suomi);
+    scene.add(artwork_Welrod_MkII);
+    scene.add(artwork_AA12);
+    scene.add(artwork_SAT8);
+
+    pickables.push(artwork_M16A1);
+    pickables.push(artwork_M4A1);
+    pickables.push(artwork_AR15);
+    pickables.push(artwork_M4_SOPMODII);
+    pickables.push(artwork_RO635);
+    pickables.push(artwork_HK416);
+    pickables.push(artwork_G11);
+    pickables.push(artwork_UMP45);
+    pickables.push(artwork_UMP9);
+    pickables.push(artwork_AN94);
+    pickables.push(artwork_AK12);
+    pickables.push(artwork_M99);
+    pickables.push(artwork_M14);
+    pickables.push(artwork_M1873);
+    pickables.push(artwork_M1891);
+    pickables.push(artwork_Negev);
+    pickables.push(artwork_WA2000);
+    pickables.push(artwork_M1918);
+    pickables.push(artwork_Suomi);
+    pickables.push(artwork_Welrod_MkII);
+    pickables.push(artwork_AA12);
+    pickables.push(artwork_SAT8);
+
+    var wall_illustration = build_wall_illustration();
+    scene.add(wall_illustration);
+
+    window.addEventListener('resize', onWindowResize, false);
+    window.addEventListener('mousedown', onDocumentMouseDown, false);
+    window.addEventListener('mousemove', onDocumentMouseMove, false);
+  }
+
+  function build() {
+  	var space = new THREE.Object3D();
+
+    // floor
+    var loader = new THREE.TextureLoader();
+    loader.setCrossOrigin ('');
+    var floorTexture = loader.load('texture/HW3/floor.jpg');
+    floorTexture.wrapS = THREE.RepeatWrapping;
+    floorTexture.wrapT = THREE.RepeatWrapping;
+    floorTexture.repeat.set(6, 4);
+    var floor = new THREE.Mesh(new THREE.PlaneGeometry(1000, 580, 140, 140), new THREE.MeshPhongMaterial({
+      map: floorTexture,
+      side: THREE.DoubleSide
+    }));
+    floor.rotation.x = -Math.PI / 2;
+    space.add(floor);
+
+    // wall
+    var wallMat = new THREE.MeshPhongMaterial({color: 0xfcf6e0});
+    var wall_negz = new THREE.Mesh(new THREE.PlaneGeometry(1000, 150, 140, 140), wallMat);
+    var wall_posz = wall_negz.clone();
+    var wall_posx = new THREE.Mesh(new THREE.PlaneGeometry(480, 150, 140, 140), wallMat);
+    var wall_negx = new THREE.Mesh(new THREE.PlaneGeometry(580, 150, 140, 140), wallMat);
+
+    wall_negz.position.set(0, 75, -290);
+    wall_posz.rotation.x = Math.PI;
+    wall_posz.position.set(0, 75, 290);
+    wall_posz.rotation.z = Math.PI;
+    wall_negx.position.set(-500, 75, 0);
+    wall_negx.rotation.y = Math.PI / 2;
+    wall_posx.position.set(500, 75, -50);
+    wall_posx.rotation.y = -Math.PI / 2;
+
+    space.add(wall_negz);
+    space.add(wall_posz);
+    space.add(wall_negx);
+    space.add(wall_posx);
+
+    // compartment
+    var compartment = new THREE.Object3D();
+    var compartmentMat = wallMat.clone();
+    var compartment1 = new THREE.Mesh(new THREE.BoxGeometry(332.8, 150, 15), compartmentMat); //左邊中間
+    var compartment2 = new THREE.Mesh(new THREE.BoxGeometry(15, 150, 167.6), compartmentMat); //左邊下方
+    var compartment3 = new THREE.Mesh(new THREE.BoxGeometry(15, 150, 136.1), compartmentMat); //左邊上方L型直
+    var compartment4 = new THREE.Mesh(new THREE.BoxGeometry(113.7, 150, 15), compartmentMat); //左邊上方L型橫
+    var compartment5 = new THREE.Mesh(new THREE.BoxGeometry(15, 150, 160), compartmentMat); //右邊下方
+    var compartment6 = new THREE.Mesh(new THREE.BoxGeometry(15, 150, 171.1), compartmentMat); //右邊上方靠牆直
+    var compartment7 = new THREE.Mesh(new THREE.BoxGeometry(174.8, 150, 15), compartmentMat); //右邊上方接下來第2個橫
+    var compartment8 = new THREE.Mesh(new THREE.BoxGeometry(15, 150, 173.3), compartmentMat); //右邊上方接下來第3個直
+    var compartment9 = new THREE.Mesh(new THREE.BoxGeometry(350.1, 150, 15), compartmentMat); //右邊上方接下來第4個橫
+    var door = new THREE.Mesh(new THREE.BoxGeometry(8, 150, 100), compartmentMat);
+
+    compartment1.position.set(-333.6, 75, 14.6);
+    compartment2.position.set(-257.7, 75, 206.2);
+    compartment3.position.set(-287, 75, -221.9);
+    compartment4.position.set(-237.6, 75, -146.4);
+    compartment5.position.set(151.9, 75, 210);
+    compartment6.position.set(188.6, 75, -204.4);
+    compartment7.position.set(101.2, 75, -146.4);
+    compartment8.position.set(13.8, 75, -79.7);
+    compartment9.position.set(181.3, 75, 14.4);
+    door.position.set(536, 75, 255);
+    door.rotation.y = -Math.PI / 4;
+
+    compartment.add(compartment1);
+    compartment.add(compartment2);
+    compartment.add(compartment3);
+    compartment.add(compartment4);
+    compartment.add(compartment5);
+    compartment.add(compartment6);
+    compartment.add(compartment7);
+    compartment.add(compartment8);
+    compartment.add(compartment9);
+    compartment.add(door);
+
+    // bench
+    var bench1 = new THREE.Object3D();
+    var benchMat = new THREE.MeshPhongMaterial({color: 0xffc160});
+    var top = new THREE.Mesh(new THREE.BoxGeometry(158, 4, 40), benchMat);
+    var base_R = new THREE.Mesh(new THREE.BoxGeometry(4, 43, 40), benchMat);
+    var base_L = base_R.clone();
+
+    top.position.y = 45;
+    base_R.position.set(77, 21.5, 0);
+    base_L.position.set(-77, 21.5, 0);
+
+    bench1.add(top);
+    bench1.add(base_R);
+    bench1.add(base_L);
+
+    var bench2 = bench1.clone();
+
+    bench1.position.set(-50, 0, 175);
+    bench2.position.set(350, 0, -132);
+    bench2.rotation.y = -Math.PI / 2;
+    ////////////////////
+
+    space.add(compartment);
+    space.add(bench1);
+    space.add(bench2);
+
+    // shadow related
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    space.traverse (
+       function (mesh) {
+          if (mesh instanceof THREE.Mesh) {
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+          }
+       }
+    );
+    compartment.traverse (
+       function (mesh) {
+          if (mesh instanceof THREE.Mesh) {
+            mesh.castShadow = false;
+          }
+       }
+    );
+
+    floor.castShadow = false;
+    wall_negz.castShadow = false;
+    wall_posz.castShadow = false;
+    wall_negx.castShadow = false;
+    wall_posx.castShadow = false;
+
+  	return space;
+  }
+
+  function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  function onDocumentMouseDown(event) {
+    let WW = window.innerWidth;
+    let HH = window.innerHeight;
+    let y0 = HH/2.5;
+    let vh = HH;
+    //event.preventDefault(); //事件觸發的話select選單會無法展開
+    mouse.x = (event.clientX / WW) * 2 - 1;
+    mouse.y = -((event.clientY-HH+y0+vh) / vh) * 2 + 1; //Viewport Picking公式
+
+  	raycaster.setFromCamera(mouse, camera);
+    var intersects = raycaster.intersectObjects (pickables, true);
+    if (intersects.length > 0) {
+      let picked = intersects[0].object.parent.name;
+      switch (picked) {
+        case "M16A1":
+          $('#name').text ("M16A1");
+          $('#name').css('color', '#888888');
+          $('#directions').html ("原產國：美國<br>槍械類型：突擊步槍<br>總重：3.26kg<br>全長：1006mm<br>槍管長度：508mm<br>使用彈藥：5.56×45mm北約標準步槍彈、點223雷明頓槍彈<br>口徑：5.56mm<br>自動方式：氣吹式+迴轉閉鎖式槍機<br>發射速率：750-900發/min<br>槍口初速：975m/s<br>有效射程：550m<br>供彈方式：20或30發可拆卸STANAG彈匣");
+          break;
+        case "M4A1":
+          $('#name').text ("M4A1");
+          $('#name').css('color', '#7fff7c');
+          $('#directions').html ("原產國：美國<br>槍械類型：突擊步槍<br>總重：2.88kg/3.4kg（連30發彈匣）<br>全長：838mm/757mm（槍託收起）<br>槍管長度：368.3mm<br>彈藥：5.56×45mm北約標準步槍彈<br>自動方式：直接氣吹式+旋轉閉鎖槍機<br>發射速率：700—950發/min<br>槍口初速：905m/s<br>供彈方式：20、30發STANAG彈匣");
+          break;
+        case "AR15":
+          $('#name').text ("AR-15");
+          $('#name').css('color', '#f18cff');
+          $('#directions').html ("原產國：美國<br>槍械類型：突擊步槍<br>總重：3.09kg<br>全長：876.3mm<br>槍管長度：406.4mm<br>彈藥：.223 Remington、5.56×45北約標準步槍彈<br>口徑：5.56mm<br>自動方式：直接氣吹式+旋轉閉鎖槍機<br>發射速率：800發/min<br>槍口初速：975m/s<br>有效射程：550m<br>供彈方式：10、20、25或30發STANAG（北約標準）彈匣");
+          break;
+        case "M4_SOPMODII":
+          $('#name').text ("M4 SOPMODII");
+          $('#name').css('color', '#ff4949');
+          $('#directions').html ("原產國：美國<br>槍械類型：突擊步槍<br>總重：2.88kg/3.4kg（連30發彈匣）<br>全長：838mm/757mm（槍託收起）<br>槍管長度：368.3mm<br>彈藥：5.56×45mm北約標準步槍彈<br>口徑：5.56mm（.223寸）<br>自動方式：氣吹式+迴轉閉鎖式槍機<br>發射速率：700—950發/min<br>槍口初速：905m/s<br>供彈方式：20、30發STANAG彈匣");
+          break;
+        case "RO635":
+          $('#name').text ("RO635");
+          $('#name').css('color', '#ffff00');
+          $('#directions').html ("原產國：美國<br>槍械類型：衝鋒槍<br>總重：2.61kg<br>全長：730mm/650mm（槍託收起）<br>槍管長度：267mm<br>彈藥：9×19mm Para手槍彈<br>口徑：5.56mm<br>自動方式：閉鎖式槍機<br>發射速率：700-1000發/min<br>槍口初速：396m/s<br>有效射程：100m<br>供彈方式：20發或32發直形彈匣");
+          break;
+        case "HK416":
+          $('#name').text ("HK416");
+          $('#name').css('color', '#87ceeb');
+          $('#directions').html ("原產國：德國<br>槍械類型：突擊步槍<br>全長：709/805mm（10.4寸槍管版本折疊/展開槍托）<br>全重：3.12kg（10.4寸槍管版本）<br>使用彈藥：5.56×45 NATO<br>射速：700-900發/min（因使用彈種和槍機而定）<br>自動方式：AR結構+短行程導氣活塞式，旋轉閉鎖槍機<br>供彈方式：30發STANAG（北約標準）彈匣");
+          break;
+        case "G11":
+          $('#name').text ("G11");
+          $('#name').css('color', '#a1b7a1');
+          $('#directions').html ("原產國：德國<br>槍械類型：突擊步槍<br>全長：750mm<br>寬：74mm<br>高：295mm<br>空槍重：3.6kg<br>全重：4.3kg（帶兩個全滿彈匣）<br>槍管長：540mm<br>發射方式：單發、3發點射、連發<br>理論射速：2000發/min（3發點射）、460發/min（連發）<br>彈匣容量：45 rds<br>槍口初速：930m/s");
+          break;
+        case "UMP45":
+          $('#name').text ("UMP45");
+          $('#name').css('color', '#f4bc42');
+          $('#directions').html ("原產國：德國<br>槍械類型：衝鋒槍<br>全長：695/455mm(槍托伸展/槍托縮折)<br>槍管長：200mm<br>全槍空重：2.47kg（5.45磅）<br>口徑：11.43mm（.45英寸）<br>槍口初速：320m/s<br>有效射程：100m<br>最大射速：.45 ACP：580發/min、.45 ACP高壓彈：700發/min<br>彈匣容量：25發彈匣<br>彈藥：11.43×23mm.45ACP");
+          break;
+        case "UMP9":
+          $('#name').text ("UMP9");
+          $('#name').css('color', '#ce984c');
+          $('#directions').html ("原產國：德國<br>槍械類型：衝鋒槍<br>全長：695mm/455mm（槍托折疊）<br>槍管長：200mm<br>全槍重：2.35kg<br>口徑：9mm<br>彈頭初速：320m/s<br>有效射程：100m<br>最大射速：600發/min<br>彈匣容量：30發可拆卸式彈匣<br>初速：320m/s<br>配用彈種：9×19mm");
+          break;
+        case "AN94":
+          $('#name').text ("AN-94");
+          $('#name').css('color', '#aaaaaa');
+          $('#directions').html ("原產國：俄羅斯<br>槍械類型：突擊步槍<br>全長：943mm(槍托展開)、728mm(槍托折疊)<br>槍管長：405mm<br>重量：3.85kg(不含彈匣)、4.2kg(帶彈匣和光學瞄準鏡1PN29)<br>彈藥：5.45×39mm<br>工作原理：旋轉閉鎖式槍機，導氣式，自由後座原理<br>射速：600發/min(全自動)、1800(兩發點射)<br>槍口初速：900m/s<br>有效射程：700m<br>供彈方式：AK-74式30發或45發彈匣，或60發四排式彈匣");
+          break;
+        case "AK12":
+          $('#name').text ("AK-12");
+          $('#name').css('color', '#cccccc');
+          $('#directions').html ("原產國：俄羅斯<br>槍械類型：突擊步槍<br>全長：862mm（槍託收起）、922mm（槍托展開）、688mm（折疊托型折疊時）、1006-1066mm（帶消音器）<br>槍管長：415mm<br>重量：3.5kg<br>彈藥規格：5.45×39mm<br>工作原理：導氣式<br>射速：700發/min<br>槍口初速：900m/s<br>有效射程：800m<br>供彈：30發彈匣（標準型）<br>彈匣重：0.215kg");
+          break;
+        case "M99":
+          $('#name').text ("M99");
+          $('#name').css('color', '#ff56c9');
+          $('#directions').html ("原產國：中國<br>槍械類型：步槍<br>全重：12kg<br>全長：1480mm<br>槍管長度：800mm<br>彈藥：12.7×108mm<br>槍機種類：直接導氣式，滾轉式槍機<br>槍口初速：800m/s<br>有效射程：1500m<br>彈匣容量：5、10 rds<br>瞄具倍率：8×，10×");
+          break;
+        case "M14":
+          $('#name').text ("M14");
+          $('#name').css('color', '#fc8d55');
+          $('#directions').html ("原產國：美國<br>槍械類型：步槍<br>全長：1125mm<br>總重：3.64kg/8.0lbs（空槍，不含彈匣）、5.0kg/11.0lbs（含實彈匣和背帶）<br>槍管長度：559mm/22寸（4條膛線，右旋，1:12纏距）<br>使用彈藥：7.62×51mm NATO彈<br>槍機：長行程活塞導氣，旋轉閉鎖槍機<br>槍口初速：853m/s<br>理論射速：700-750 RPM<br>瞄準基線長：678mm<br>供彈方式：20發可拆彈匣，另有5發橋架也可直接插入機匣為彈匣供彈");
+          break;
+        case "M1873":
+          $('#name').text ("柯爾特左輪");
+          $('#name').css('color', '#ffecce');
+          $('#directions').html ("原產國：美國<br>槍械類型：手槍<br>全長：279mm（5½\"槍管）/318mm（7½\"槍管）<br>總重：1048g（7½\"槍管）<br>彈藥：.45柯爾特彈、.44-40溫徹斯特彈、.38-40溫徹斯特彈、.32-20溫徹斯特彈、.38柯爾特彈以及其他彈藥包括.22LR彈、.38特種彈、.357馬格南彈以及.44特種彈<br>槍機種類：單動式<br>供彈方式：6發彈巢<br>瞄準具型式：前後準星");
+          break;
+        case "M1891":
+          $('#name').text ("莫辛-納甘");
+          $('#name').css('color', '#ffd189');
+          $('#directions').html ("原產國：俄羅斯<br>槍械類型：步槍<br>全長：1306mm，各型號不同<br>全重：4.22kg（空槍），各型號不同<br>口徑：7.62mm<br>槍機種類：旋轉後拉式槍機<br>初速：615m/s（M1891）、860m/s（M1891/30）<br>戰鬥射速：10發/min<br>有效射程：548.64m<br>彈匣容量：5發彈匣、內置彈倉<br>使用槍彈：7.62×54mm R槍彈");
+          break;
+        case "Negev":
+          $('#name').text ("內蓋夫");
+          $('#name').css('color', '#f794fc');
+          $('#directions').html ("原產國：以色列<br>槍械類型：機槍<br>全長：1020mm/890mm（槍託收起）<br>槍管長：460mm<br>全槍寬：60mm<br>空槍重：7.40kg<br>槍口初速：915m/s<br>理論射速：650-950 RPM<br>膛線：6條右旋，1/7<br>瞄準基線長：440mm<br>表尺射程：300-1000m<br>150發軟彈袋全重：2.1kg");
+          break;
+        case "WA2000":
+          $('#name').text ("WA2000");
+          $('#name').css('color', '#ba6c1f');
+          $('#directions').html ("原產國：德國<br>槍械類型：步槍<br>全長：905mm(35.6 in)<br>槍管長：650mm(25.6 in)<br>全重：6.95kg（空槍）<br>使用槍彈：7.62×51mm NATO、.300溫徹斯特麥格農、7.5×55mm Swiss<br>彈匣容量：6 rds<br>射擊速率：半自動<br>有效射程：700m(766 yds)<br>使用瞄具：Schmidt & Bender 2.5-10X望遠式瞄準鏡");
+          break;
+        case "M1918":
+          $('#name').text ("M1918");
+          $('#name').css('color', '#ffd293');
+          $('#directions').html ("原產國：美國<br>槍械類型：機槍<br>全長：1214mm（47.8寸）<br>總重：7.2kg（A1）、8.8kg（A2）<br>使用彈藥：.30-06 Springfield （7.62×63mm）、7.92×57mm尖頭彈(為適應中國戰場所改膛的)<br>口徑：7.62mm<br>槍機種類：長行程導氣式活塞、開放式槍機<br>發射速率：300-450發/min； 500-650發/min（A2）<br>槍口初速：805m/s<br>有效射程：548m<br>供彈方式：20發彈匣");
+          break;
+        case "Suomi":
+          $('#name').text ("索米");
+          $('#name').css('color', '#70eeff');
+          $('#directions').html ("原產國：芬蘭<br>槍械類型：衝鋒槍<br>重量：4.72kg(空重)、5.74kg(50發彈匣滿裝填)、6.2kg(70發彈鼓滿裝填)<br>全長：870mm<br>槍管長度：314mm<br>使用彈藥：9×19mm帕拉貝魯姆手槍彈<br>自動方式：自由槍機原理<br>發射速率：750–900發/min<br>槍口初速：396m/s<br>有效射程：200m<br>供彈方式：20、36或50發可卸式彈匣，40、70發可卸式彈鼓<br>瞄準具類型：片狀準星和弧形座式可調錶尺");
+          break;
+        case "Welrod_MkII":
+          $('#name').text ("維爾德Mk II");
+          $('#name').css('color', '#f9d275');
+          $('#directions').html ("原產國：英國<br>槍械類型：手槍<br>全長：310mm<br>總重：1.09kg<br>槍管長度：95mm（除消音器）<br>全高：135mm（5.4英寸）<br>使用彈藥：9mm魯格手槍彈<br>載彈量：8");
+          break;
+        case "AA12":
+          $('#name').text ("AA-12");
+          $('#name').css('color', '#c270f9');
+          $('#directions').html ("原產國：美國<br>槍械類型：霰彈槍<br>全長：991mm<br>全重：5.2kg<br>槍管長度：457mm<br>彈藥：12號口徑霰彈<br>槍機種類：開放式槍機、先進底火引燃反沖作用操作<br>發射速率：300-360發/min<br>槍口初速：350m/s<br>有效射程：100m<br>供彈方式：8發可拆卸式彈匣、20發可拆卸式彈鼓<br>瞄準具型式：機械瞄具、2倍光學變焦瞄準鏡");
+          break;
+        case "SAT8":
+          $('#name').text ("S.A.T.8");
+          $('#name').css('color', '#f9b24d');
+          $('#directions').html ("原產國：義大利<br>槍械類型：霰彈槍<br>全長：1050mm<br>總重：3.15kg<br>槍管長度：510mm（20英寸）<br>彈藥：12號口徑霰彈<br>槍機種類：氣動式<br>扳機-槍托距離：308-385mm<br>供彈方式：7+1發管式彈倉<br>瞄準具型式：機械瞄具、金屬鬼環式照門和準星");
+          break;
+      }
+    }
+  }
+
+  function onDocumentMouseMove(event) {
+    let WW = window.innerWidth;
+    let HH = window.innerHeight;
+    let y0 = HH/2.5;
+    let vh = HH;
+    //event.preventDefault(); //事件觸發的話select選單會無法展開
+    mouse.x = (event.clientX / WW) * 2 - 1;
+    mouse.y = -((event.clientY-HH+y0+vh) / vh) * 2 + 1; //Viewport Picking公式
+
+    raycaster.setFromCamera(mouse, camera);
+
+    var intersects = raycaster.intersectObjects(pickables, true);
+    if (intersects.length > 0) document.body.style.cursor = 'pointer';
+    else document.body.style.cursor = 'auto';
+  }
+
+  function animate() {
+    roomLight.intensity = (toggleRoom === true) ? 1 : 0;
+    roomLight.castShadow = (toggleRoom === true) ? true : false;
+    controls.update();
+    TWEEN.update();
+    requestAnimationFrame(animate);
+    render(whichCamera);
+    //console.log(camera.position);
+    //console.log(controls.target);
+  }
+
+  function render(which) {
+    var WW = window.innerWidth;
+    var HH = window.innerHeight;
+    renderer.setScissorTest(true);
+    switch (which) {
+      case 0:
+        renderer.setViewport(0, HH/2.5, WW, HH);
+        renderer.setScissor(0, HH/2.5, WW, HH);
+        renderer.clear();
+        renderer.render(scene, camera);
+        renderer.setViewport(WW/6.5, HH/4.5, WW/6, HH/6);
+        renderer.setScissor(WW/6.5, HH/4.5, WW/6, HH/6);
+        renderer.clear();
+        renderer.render(scene, camera1);
+        renderer.setViewport(WW/3, HH/4.5, WW/6, HH/6);
+        renderer.setScissor(WW/3, HH/4.5, WW/6, HH/6);
+        renderer.clear();
+        renderer.render(scene, camera2);
+        renderer.setViewport(WW/6.5, HH/30, WW/6, HH/6);
+        renderer.setScissor(WW/6.5, HH/30, WW/6, HH/6);
+        renderer.clear();
+        renderer.render(scene, camera3);
+        renderer.setViewport(WW/3, HH/30, WW/6, HH/6);
+        renderer.setScissor(WW/3, HH/30, WW/6, HH/6);
+        renderer.clear();
+        renderer.render(scene, camera4);
+        renderer.setViewport(WW/1.95, HH/9.5, WW/3.5, HH/3.5);
+        renderer.setScissor(WW/1.95, HH/9.5, WW/3.5, HH/3.5);
+        renderer.clear();
+        renderer.render(scene, camera1);
+        break;
+      case 1:
+        renderer.setViewport(0, HH/2.5, WW, HH);
+        renderer.setScissor(0, HH/2.5, WW, HH);
+        renderer.clear();
+        renderer.render(scene, camera);
+        renderer.setViewport(WW/6.5, HH/4.5, WW/6, HH/6);
+        renderer.setScissor(WW/6.5, HH/4.5, WW/6, HH/6);
+        renderer.clear();
+        renderer.render(scene, camera1);
+        renderer.setViewport(WW/3, HH/4.5, WW/6, HH/6);
+        renderer.setScissor(WW/3, HH/4.5, WW/6, HH/6);
+        renderer.clear();
+        renderer.render(scene, camera2);
+        renderer.setViewport(WW/6.5, HH/30, WW/6, HH/6);
+        renderer.setScissor(WW/6.5, HH/30, WW/6, HH/6);
+        renderer.clear();
+        renderer.render(scene, camera3);
+        renderer.setViewport(WW/3, HH/30, WW/6, HH/6);
+        renderer.setScissor(WW/3, HH/30, WW/6, HH/6);
+        renderer.clear();
+        renderer.render(scene, camera4);
+        renderer.setViewport(WW/1.95, HH/9.5, WW/3.5, HH/3.5);
+        renderer.setScissor(WW/1.95, HH/9.5, WW/3.5, HH/3.5);
+        renderer.clear();
+        renderer.render(scene, camera2);
+        break;
+      case 2:
+        renderer.setViewport(0, HH/2.5, WW, HH);
+        renderer.setScissor(0, HH/2.5, WW, HH);
+        renderer.clear();
+        renderer.render(scene, camera);
+        renderer.setViewport(WW/6.5, HH/4.5, WW/6, HH/6);
+        renderer.setScissor(WW/6.5, HH/4.5, WW/6, HH/6);
+        renderer.clear();
+        renderer.render(scene, camera1);
+        renderer.setViewport(WW/3, HH/4.5, WW/6, HH/6);
+        renderer.setScissor(WW/3, HH/4.5, WW/6, HH/6);
+        renderer.clear();
+        renderer.render(scene, camera2);
+        renderer.setViewport(WW/6.5, HH/30, WW/6, HH/6);
+        renderer.setScissor(WW/6.5, HH/30, WW/6, HH/6);
+        renderer.clear();
+        renderer.render(scene, camera3);
+        renderer.setViewport(WW/3, HH/30, WW/6, HH/6);
+        renderer.setScissor(WW/3, HH/30, WW/6, HH/6);
+        renderer.clear();
+        renderer.render(scene, camera4);
+        renderer.setViewport(WW/1.95, HH/9.5, WW/3.5, HH/3.5);
+        renderer.setScissor(WW/1.95, HH/9.5, WW/3.5, HH/3.5);
+        renderer.clear();
+        renderer.render(scene, camera3);
+        break;
+      case 3:
+        renderer.setViewport(0, HH/2.5, WW, HH);
+        renderer.setScissor(0, HH/2.5, WW, HH);
+        renderer.clear();
+        renderer.render(scene, camera);
+        renderer.setViewport(WW/6.5, HH/4.5, WW/6, HH/6);
+        renderer.setScissor(WW/6.5, HH/4.5, WW/6, HH/6);
+        renderer.clear();
+        renderer.render(scene, camera1);
+        renderer.setViewport(WW/3, HH/4.5, WW/6, HH/6);
+        renderer.setScissor(WW/3, HH/4.5, WW/6, HH/6);
+        renderer.clear();
+        renderer.render(scene, camera2);
+        renderer.setViewport(WW/6.5, HH/30, WW/6, HH/6);
+        renderer.setScissor(WW/6.5, HH/30, WW/6, HH/6);
+        renderer.clear();
+        renderer.render(scene, camera3);
+        renderer.setViewport(WW/3, HH/30, WW/6, HH/6);
+        renderer.setScissor(WW/3, HH/30, WW/6, HH/6);
+        renderer.clear();
+        renderer.render(scene, camera4);
+        renderer.setViewport(WW/1.95, HH/9.5, WW/3.5, HH/3.5);
+        renderer.setScissor(WW/1.95, HH/9.5, WW/3.5, HH/3.5);
+        renderer.clear();
+        renderer.render(scene, camera4);
+        break;
+    }
+  }
+</script>
+</body>
+</html>

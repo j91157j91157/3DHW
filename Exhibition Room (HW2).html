@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>★星爆氣流展★</title>
+  <link rel="shortcut icon" href="https://i.imgur.com/jnjsKvZ.png">
+</head>
+
+<script src="js/threeR84.min.js"></script>
+<script src="js/OrbitControls.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<div id="info">
+  <a href="texture/HW2/2D design layout.png">2D Design Layout</a><br>
+  <button id="camera" style="width:10%">camera</button>
+  <button id="camera1" style="width:10%">camera1</button>
+  <button id="camera2" style="width:10%">camera2</button>
+  <button id="roomLight" style="width:10%">Room Light</button><br>
+  <button id="light" style="width:10%">Exhibits Light</button>
+  <input id='light_range' type='range' min=0 max=1 value=0 step="any"><br>
+</div>
+
+<style>
+	body {
+    margin: 0px;
+		overflow: hidden;
+	}
+
+  #info {
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+  }
+</style>
+
+<body>
+<script>
+  class Light {
+    constructor(x, z) {
+      this.on = false;
+      this.x = x;
+      this.z = z;
+      this.obj = this.makeLight();
+      this.lamoshade = this.makeLampshade();
+    }
+
+    get isOn() {
+      return this.on;
+    }
+
+    toggle() {
+      this.on = !this.on;
+      this.update();
+     }
+
+    update() {
+      if (this.on) {
+        this.obj.intensity = 1;
+        this.obj.castShadow = true;
+      } else {
+        this.obj.intensity = 0;
+        this.obj.castShadow = false;
+      }
+    }
+
+    makeLight(){
+      let light = new THREE.SpotLight(0xdddddd); //ffffff，圖畫掛上去之後再看看要不要調整(太亮之類的)。
+      light.position.set(this.x, 250, this.z);
+      light.target.position.set(this.x, 0, this.z);
+      light.target.updateMatrixWorld();
+
+      light.angle = Math.PI/6;
+      light.penumbra = 0.25;
+      light.intensity = 0;
+
+      light.castShadow = true; //太多燈了，light超過15個three.js承受不了！
+      light.shadow.mapSize.width = 512;
+      light.shadow.mapSize.height = 512;
+
+      light.shadow.camera.near = 50
+      light.shadow.camera.far = 400;
+      light.shadow.camera.fov = 60;
+      light.shadow.bias = 0.001;
+      scene.add(light);
+      //scene.add(new THREE.SpotLightHelper(light));
+      //scene.add(new THREE.CameraHelper (light.shadow.camera));
+      return light;
+    }
+
+    makeLampshade(){
+      let points = [];
+      for ( let i = 0; i < 10; i ++ ) {
+        points.push( new THREE.Vector2( Math.sin( i * 0.2 ) * 15 + 3, ( i - 5 ) * 2 ) );
+      }
+      let geometry = new THREE.LatheGeometry(points, 20);
+      let material = new THREE.MeshPhongMaterial({color: 0xffffff});
+      let lathe = new THREE.Mesh(geometry, material);
+      lathe.position.set(this.x, 250, this.z);
+      lathe.rotation.x = -Math.PI;
+      scene.add(lathe);
+      return lathe;
+    }
+  }
+
+  var renderer, scene;
+  var camera, camera1, camera2;
+  var controls, controls1, controls2;
+  var roomLight, l1, l2, l3, l4, l5, l7, l8, l9, l10, l11, l12, l13, l14;
+  var toggleRoom = true;
+  var whichCamera = 0;
+
+  init();
+  animate();
+
+  $('#camera').click (function() {
+    camera.position.set(0, 500, 0);
+    // 不可使用camera.lookAt (vetcor)，因為會被OrbitControls給覆蓋掉，應該直接更改OrbitControls裡的target
+    controls.target = new THREE.Vector3(0, 0, 0);
+    whichCamera = 0;
+  });
+  $('#camera1').click (function() {
+    camera1.position.set(478, 108, 236);
+    controls1.target = new THREE.Vector3(137, 0, 1);
+    whichCamera = 1;
+  });
+  $('#camera2').click (function() {
+    camera2.position.set(79, 71, 35);
+    controls2.target = new THREE.Vector3(-11, 9, 196);
+    whichCamera = 2;
+  });
+  $('#roomLight').click (function() {
+    toggleRoom = !toggleRoom;
+  });
+  $('#light').click (function() {
+    l1.toggle(); l2.toggle();
+    l3.toggle(); l4.toggle();
+    l5.toggle(); l6.toggle();
+    l7.toggle(); l8.toggle();
+    l9.toggle(); l10.toggle();
+    l11.toggle(); l12.toggle();
+    l13.toggle(); l14.toggle();
+  });
+  $('#light_range').change( function(){
+    l1.obj.intensity = $(this).val(); l2.obj.intensity = $(this).val();
+    l3.obj.intensity = $(this).val(); l4.obj.intensity = $(this).val();
+    l5.obj.intensity = $(this).val(); l6.obj.intensity = $(this).val();
+    l7.obj.intensity = $(this).val(); l8.obj.intensity = $(this).val();
+    l9.obj.intensity = $(this).val(); l10.obj.intensity = $(this).val();
+    l11.obj.intensity = $(this).val(); l12.obj.intensity = $(this).val();
+    l13.obj.intensity = $(this).val(); l14.obj.intensity = $(this).val();
+  });
+
+  function init() {
+
+    renderer = new THREE.WebGLRenderer({
+      antialias: true
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x404040);
+    document.body.appendChild(renderer.domElement);
+
+    // camera
+    camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 1, 1500);
+    camera1 = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 1, 1500);
+    camera2 = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 1, 1500);
+
+    camera.position.set(0, 500, 0);
+    camera1.position.set(478, 108, 236);
+    camera2.position.set(79, 71, 35);
+
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls1 = new THREE.OrbitControls(camera1, renderer.domElement);
+    controls2 = new THREE.OrbitControls(camera2, renderer.domElement);
+
+    scene = new THREE.Scene();
+
+    let axes = new THREE.AxisHelper(500);
+    scene.add(axes);
+
+    let gridXZ = new THREE.GridHelper(200, 20, 'red', 'white');
+    //scene.add(gridXZ);
+
+    // exhibition room
+    var room = build();
+  	scene.add(room); //(unitize (room, 1.5));
+
+    // lighting
+    var light = new THREE.AmbientLight(0x505050); // soft white light
+    scene.add(light);
+
+    // room light
+    roomLight = new THREE.SpotLight(0xffffff);
+    roomLight.angle = Math.PI / 2.5;
+    roomLight.penumbra = 0.25;
+
+    roomLight.castShadow = true;
+    roomLight.shadow.mapSize.width = 1024;
+    roomLight.shadow.mapSize.height = 1024;
+
+    roomLight.shadow.camera.near = 200;
+    roomLight.shadow.camera.far = 500;
+    roomLight.shadow.camera.fov = 150;
+    roomLight.shadow.bias = 0.001;
+
+    roomLight.position.set(-25, 450, 25);
+
+    scene.add(roomLight);
+    //scene.add(new THREE.SpotLightHelper(roomLight));
+    //scene.add ( new THREE.CameraHelper (roomLight.shadow.camera) );
+
+    // exhibits light (編號從左上開始，依序往右邊算，接著再下一排)
+    l1 = new Light(-350, -230);
+    l2 = new Light(-225, -210);
+    l3 = new Light(125, -210);
+    l4 = new Light(254, -210);
+    l5 = new Light(-420, -50);
+    l6 = new Light(-260, -50);
+    l7 = new Light(80, -50);
+    l8 = new Light(290, -50);
+    l9 = new Light(-420, 80);
+    l10 = new Light(-260, 80);
+    l11 = new Light(80, 80);
+    l12 = new Light(290, 80);
+    l13 = new Light(-320, 210);
+    l14 = new Light(218, 210);
+
+    window.addEventListener('resize', onWindowResize, false);
+  }
+
+  function build() {
+  	var space = new THREE.Object3D();
+
+    // floor
+    var loader = new THREE.TextureLoader();
+    loader.setCrossOrigin ('');
+    var floorTexture = loader.load('texture/HW2/floor.jpg');
+    floorTexture.wrapS = THREE.RepeatWrapping;
+    floorTexture.wrapT = THREE.RepeatWrapping;
+    floorTexture.repeat.set(6, 4);
+    var floor = new THREE.Mesh(new THREE.PlaneGeometry(1000, 580, 140, 140), new THREE.MeshPhongMaterial({
+      map: floorTexture,
+      side: THREE.DoubleSide
+    }));
+    floor.rotation.x = -Math.PI / 2;
+    space.add(floor);
+
+    // wall
+    var wallMat = new THREE.MeshPhongMaterial({color: 0xffffff});
+    var wall_negz = new THREE.Mesh(new THREE.PlaneGeometry(1000, 150, 140, 140), wallMat);
+    var wall_posz = wall_negz.clone();
+    var wall_posx = new THREE.Mesh(new THREE.PlaneGeometry(480, 150, 140, 140), wallMat);
+    var wall_negx = new THREE.Mesh(new THREE.PlaneGeometry(580, 150, 140, 140), wallMat);
+
+    wall_negz.position.set(0, 75, -290);
+    wall_posz.rotation.x = Math.PI;
+    wall_posz.position.set(0, 75, 290);
+    wall_posz.rotation.z = Math.PI;
+    wall_negx.position.set(-500, 75, 0);
+    wall_negx.rotation.y = Math.PI / 2;
+    wall_posx.position.set(500, 75, -50);
+    wall_posx.rotation.y = -Math.PI / 2;
+
+    space.add(wall_negz);
+    space.add(wall_posz);
+    space.add(wall_negx);
+    space.add(wall_posx);
+
+    // compartment
+    var compartment = new THREE.Object3D();
+    var compartmentMat = wallMat.clone();
+    var compartment1 = new THREE.Mesh(new THREE.BoxGeometry(332.8, 150, 15), compartmentMat); //左邊中間
+    var compartment2 = new THREE.Mesh(new THREE.BoxGeometry(15, 150, 167.6), compartmentMat); //左邊下方
+    var compartment3 = new THREE.Mesh(new THREE.BoxGeometry(15, 150, 136.1), compartmentMat); //左邊上方L型直
+    var compartment4 = new THREE.Mesh(new THREE.BoxGeometry(113.7, 150, 15), compartmentMat); //左邊上方L型橫
+    var compartment5 = new THREE.Mesh(new THREE.BoxGeometry(15, 150, 160), compartmentMat); //右邊下方
+    var compartment6 = new THREE.Mesh(new THREE.BoxGeometry(15, 150, 171.1), compartmentMat); //右邊上方靠牆直
+    var compartment7 = new THREE.Mesh(new THREE.BoxGeometry(174.8, 150, 15), compartmentMat); //右邊上方接下來第2個橫
+    var compartment8 = new THREE.Mesh(new THREE.BoxGeometry(15, 150, 173.3), compartmentMat); //右邊上方接下來第3個直
+    var compartment9 = new THREE.Mesh(new THREE.BoxGeometry(350.1, 150, 15), compartmentMat); //右邊上方接下來第4個橫
+    var door = new THREE.Mesh(new THREE.BoxGeometry(8, 150, 100), compartmentMat);
+
+    compartment1.position.set(-333.6, 75, 14.6);
+    compartment2.position.set(-257.7, 75, 206.2);
+    compartment3.position.set(-287, 75, -221.9);
+    compartment4.position.set(-237.6, 75, -146.4);
+    compartment5.position.set(151.9, 75, 210);
+    compartment6.position.set(188.6, 75, -204.4);
+    compartment7.position.set(101.2, 75, -146.4);
+    compartment8.position.set(13.8, 75, -79.7);
+    compartment9.position.set(181.3, 75, 14.4);
+    door.position.set(536, 75, 255);
+    door.rotation.y = -Math.PI / 4;
+
+    compartment.add(compartment1);
+    compartment.add(compartment2);
+    compartment.add(compartment3);
+    compartment.add(compartment4);
+    compartment.add(compartment5);
+    compartment.add(compartment6);
+    compartment.add(compartment7);
+    compartment.add(compartment8);
+    compartment.add(compartment9);
+    compartment.add(door);
+
+    // bench
+    var bench1 = new THREE.Object3D();
+    var benchMat = new THREE.MeshPhongMaterial({color: 0xffc160});
+    var top = new THREE.Mesh(new THREE.BoxGeometry(158, 4, 40), benchMat);
+    var base_R = new THREE.Mesh(new THREE.BoxGeometry(4, 43, 40), benchMat);
+    var base_L = base_R.clone();
+
+    top.position.y = 45;
+    base_R.position.set(77, 21.5, 0);
+    base_L.position.set(-77, 21.5, 0);
+
+    bench1.add(top);
+    bench1.add(base_R);
+    bench1.add(base_L);
+
+    var bench2 = bench1.clone();
+
+    bench1.position.set(-50, 0, 175);
+    bench2.position.set(350, 0, -132);
+    bench2.rotation.y = -Math.PI / 2;
+    ////////////////////
+
+    space.add(compartment);
+    space.add(bench1);
+    space.add(bench2);
+
+    // shadow related
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    space.traverse (
+       function (mesh) {
+          if (mesh instanceof THREE.Mesh) {
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+          }
+       }
+    );
+    compartment.traverse (
+       function (mesh) {
+          if (mesh instanceof THREE.Mesh) {
+            mesh.castShadow = false;
+          }
+       }
+    );
+
+    floor.castShadow = false;
+    wall_negz.castShadow = false;
+    wall_posz.castShadow = false;
+    wall_negx.castShadow = false;
+    wall_posx.castShadow = false;
+
+  	return space;
+  }
+
+  function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+
+  function animate() {
+    roomLight.intensity = (toggleRoom === true) ? 1 : 0;
+    roomLight.castShadow = (toggleRoom === true) ? true : false;
+
+    requestAnimationFrame(animate);
+    render(whichCamera);
+  }
+
+  function render(which) {
+    switch (which) {
+      case 0:
+        renderer.render(scene, camera);
+        controls.update();
+        //console.log(controls.target);
+        //console.log(camera.position);
+        break;
+      case 1:
+        renderer.render(scene, camera1);
+        controls1.update();
+        break;
+      case 2:
+        renderer.render(scene, camera2);
+        controls2.update();
+        break;
+    }
+  }
+</script>
+</body>
+</html>
